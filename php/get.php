@@ -6,6 +6,7 @@ if(!isset($_POST["token"]) || ! isset($_POST["date"]))
     exit;
 }
 require_once "config.php";
+require_once "connection.php";
 
 
 $token = mysql_real_escape_string($_POST["token"]);

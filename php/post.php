@@ -1,6 +1,7 @@
 <?php
 
 require_once "config.php";
+require_once "connection.php";
 
 if(!isset($_POST["token"]) || !isset($_POST["message"]))
     exit;
