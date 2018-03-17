@@ -23,6 +23,13 @@ $update_interval = 3; //update interval in seconds
 * Create a new project
 * Drag and drop extension.yymp  
 
+
+## Import the extension in GMStudio2
+* Open the pn_config script inside GMStudio2
+* and change the following line, to your website url
+`global.pn_website = "http://tizsoft.altervista.org/pollnet/";`
+
+
 ## Or open the example project
 `./example/` directory
 
