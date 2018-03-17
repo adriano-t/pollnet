@@ -15,7 +15,7 @@ $update_interval = 3; //update interval in seconds
 ```
 ## Installation
 
-* Upload all the php files on a directory of your website (e.g. http://yourwebsite.com/your/directory/)
+* Upload all the php files on a directory of your website (e.g. http://your_website.com/your_directory/)
 * Open the url to install.php (e.g. http://yourwebsite.com/your/directory/install.php)
 * done
   
