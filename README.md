@@ -1,6 +1,6 @@
 PollNet
 =====================
-Http multiplayer game library
+Http multiplayer game library for GMStudio2
 
 
 ## Configuration
