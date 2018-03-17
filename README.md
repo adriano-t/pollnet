@@ -19,7 +19,13 @@ $update_interval = 3; //update interval in seconds
 * Open the url to install.php (e.g. http://yourwebsite.com/your/directory/install.php)
 * done
   
-  
+## Import the extension in GMStudio2
+* Create a new project
+* Drag and drop extension.yymp  
+
+## Or open the example project
+`./example/` directory
+
 License
 --------
 
