@@ -5,7 +5,7 @@ Http multiplayer game library
 
 ## Configuration
 Open config.php and edit the following fields
-```
+```php
 $dbusername = "tizsoft"; // your username
 $password = ""; // your mysql password
 $host = "localhost";
