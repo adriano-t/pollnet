@@ -1,11 +1,11 @@
 PollNet
 =====================
-Http multiplayer game library
+Http multiplayer game library for GMStudio2
 
 
 ## Configuration
 Open config.php and edit the following fields
-```
+```php
 $dbusername = "tizsoft"; // your username
 $password = ""; // your mysql password
 $host = "localhost";
