@@ -2,6 +2,7 @@ PollNet
 =====================
 Http multiplayer game library for GMStudio2
 
+Do the following steps in order.
 
 ## 1) PHP Configuration
 Open config.php and edit the following fields
