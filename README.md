@@ -16,16 +16,16 @@ $update_interval = 3; //update interval in seconds
 ## Installation
 
 * Upload all the php files on a directory of your website (e.g. `http://your_website.com/your_directory/`)
-* Open the url to install.php (e.g. `http://your_website.com/your_directory/install.php`)
+* Open the url to `install.php` (e.g. `http://your_website.com/your_directory/install.php`)
 * done
   
 ## Import the extension in GMStudio2
 * Create a new project
-* Drag and drop extension.yymp  
+* Drag and drop `extension.yymp`
 
 
 ## Import the extension in GMStudio2
-* Open the pn_config script inside GMStudio2
+* Open the `pn_config` script inside GMStudio2
 * and change the following line, to your website url
 `global.pn_website = "http://tizsoft.altervista.org/pollnet/";`
 
