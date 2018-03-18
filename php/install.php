@@ -1,7 +1,6 @@
 <?php
 
-require_once "config.php";
-require_once "connection.php";
+require_once "config.php"; 
 
 $db = mysql_connect($host, $dbusername, $password) or die("Errore durante la connessione al database");
 mysql_select_db($database, $db) or die("Errore durante la selezione del database");
