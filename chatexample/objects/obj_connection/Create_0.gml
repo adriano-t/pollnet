@@ -1,9 +1,17 @@
+
+
 if(instance_number(object_index) > 1)
 {
 	instance_destroy();
 	exit;
 }
 pn_config();
+if(string_char_at(global.pn_website, string_length(global.pn_website)) != "/")
+	global.pn_website += "/";
+global.pn_get = global.pn_website + "get.php";
+global.pn_post = global.pn_website + "post.php";
+global.pn_lobby = global.pn_website + "lobby.php";
+
 global.pn_last_date = "1912-06-23 00:00:00";
 global.pn_token = "";
 global.pn_request_send_list = ds_list_create();

@@ -29,17 +29,18 @@ draw_text(6, room_height - 25, keyboard_string + caret);
 
 if(keyboard_check_pressed(vk_enter))
 {
-	pn_send_all(keyboard_string);
+	if(keyboard_string != "")
+		pn_send_all("chat", keyboard_string);
 	keyboard_string = "";
 }
  
-//draw last 20 messages
+//draw last 28 messages
 var count = ds_list_size(messages);
-var max_count = 20;
+var max_count = 28;
 var idx = max(0, count - max_count);
 for(var i = idx; i < count; i++)
 {
-	draw_text(125, 16 + 16 * i, messages[| i]);
+	draw_text(125, 16 + 16 * (i - idx), messages[| i]);
 }
 
 if(button_pressed(spr_x, room_width - 32, 0))

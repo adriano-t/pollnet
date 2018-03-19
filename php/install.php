@@ -13,6 +13,7 @@ mysql_query("DROP TABLE IF EXISTS pollnet_messages") or die(mysql_error());
 $query = "CREATE TABLE pollnet_games(
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
+    gametoken VARCHAR(50) NOT NULL,
     maxplayers SMALLINT NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );";

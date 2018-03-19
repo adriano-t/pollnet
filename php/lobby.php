@@ -8,16 +8,17 @@ $mode =  $_POST["mode"];
 if($mode == "host")
 {
     //create lobby
-    if(!isset($_POST["gamename"]) || !isset($_POST["username"]) || !isset($_POST["maxplayers"]) || $_POST["maxplayers"] < 1)
+    if(!isset($_POST["gamename"]) || !isset($_POST["gametoken"]) || !isset($_POST["username"]) || !isset($_POST["maxplayers"]) || $_POST["maxplayers"] < 1)
         exit;
 
     $gamename = mysql_real_escape_string($_POST["gamename"]);
+    $gametoken = mysql_real_escape_string($_POST["gametoken"]);
     $username = mysql_real_escape_string($_POST["username"]);
     $maxplayers = mysql_real_escape_string($_POST["maxplayers"]);
     $token = randomString(20);
     
-    $query = "INSERT INTO pollnet_games(name, maxplayers) 
-    VALUES('$gamename', '$maxplayers')";
+    $query = "INSERT INTO pollnet_games(name, gametoken, maxplayers) 
+    VALUES('$gamename', '$gametoken', '$maxplayers')";
     mysql_query($query) or die(mysql_error());
 
     $gameid = mysql_insert_id();
@@ -31,7 +32,7 @@ if($mode == "host")
 elseif ($mode == "join")
 {
     //join lobby
-    if(!isset($_POST["gameid"]) || !isset($_POST["username"]))
+    if(!isset($_POST["gameid"])  || !isset($_POST["username"]))
         exit;
 
     $gameid = mysql_real_escape_string($_POST["gameid"]);
@@ -69,17 +70,24 @@ elseif ($mode == "quit")
     $result = mysql_query($query) or die(mysql_error());
     echo("1");
 }
-else
+elseif ($mode == "gameslist")
 {
-    // show games list
-    $query = "SELECT pg.id, name,  num, maxplayers
+    // show games list  
+
+    if(!isset($_POST["gametoken"]))
+        exit;
+    $gametoken = mysql_real_escape_string($_POST["gametoken"]);
+
+    $query = "SELECT pg.id, name, num, maxplayers
     FROM pollnet_games pg
     JOIN (
         SELECT id, game, COUNT(game) as num 
         FROM pollnet_users 
         GROUP BY game
         ) usr 
-     ON pg.id = usr.game";
+     ON pg.id = usr.game
+     WHERE gametoken = '$gametoken'";
+    
     $result = mysql_query($query) or die(mysql_error());
 
     while ($row = mysql_fetch_assoc($result)) 

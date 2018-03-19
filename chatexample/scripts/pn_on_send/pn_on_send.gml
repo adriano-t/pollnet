@@ -1,9 +1,11 @@
-/// @description a message has been sent
+/// @description called when a message has been sent
+/// @param message_id
 /// @param to
 /// @param message
 
-var to = argument0;
-var message = argument1;
+var message_id = argument0;
+var to = argument1;
+var message = argument2;
 
 
 var s = "<" + global.pn_username + "> " + message;

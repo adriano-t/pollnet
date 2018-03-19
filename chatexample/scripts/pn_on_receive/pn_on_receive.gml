@@ -2,17 +2,31 @@
 /// @param date
 /// @param from
 /// @param is_private
+/// @param message_id
 /// @param message
 
 var date = argument0;
-var from = argument1;
+var sender_id = argument1;
+var sender_name = global.pn_players_map[? sender_id];
 var is_private = argument2;
-var message = argument3;
-
-var player = global.pn_players_map[? from];
-var s = "[" + date + "] <" + player + "> " + message;
-if(is_private)
-	s = "PRIVATE | " + s;
+var message_id = argument3;
+var message = argument4;
+ 
+ 
+ switch(message_id)
+ {
+	 case "chat":
+ 
+		var s = "[" + date + "] <" + sender_name + "> " + message;
+		if(is_private)
+			s = "PRIVATE | " + s;
+		ds_list_add(obj_chat.messages, s);
+		
+		break;
+		
+	// you can add more message types
+	//case "reaction" 
+	//	break;
+} 
 	
-ds_list_add(obj_chat.messages, s);
  

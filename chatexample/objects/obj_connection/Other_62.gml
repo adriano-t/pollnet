@@ -71,7 +71,7 @@ if (aid == global.pn_request_message)
 	
 	#region split messages 
 	
-	var from, to, message;
+	var from, to, message, packet, type, msg_id, pos, len, val;
 	
 	ld = string_pos(sep_line, r_message); 
 	while(ld)
@@ -97,10 +97,73 @@ if (aid == global.pn_request_message)
 	 
 		// message
 		wd = string_pos(sep_word, line);
-		message = string_copy(line, 1, wd - 1); 
+		packet = string_copy(line, 1, wd - 1); 
 		line = string_delete(line, 1, wd);
-	
-		pn_on_receive(global.pn_last_date, from, to, message); 
+		
+		//decode message
+		
+		//id
+		pos = string_pos(chr(10), packet);
+		msg_id = string_copy(packet, 1, pos - 1);
+		packet = string_delete(packet, 1, pos);   
+		show_debug_message(msg_id);
+		
+		//type
+		type = real(string_char_at(packet, 1));
+		packet = string_delete(packet, 1, 1);
+		
+		switch(type)
+		{
+			case 0: 
+				
+				show_debug_message("TYPE ARRAY");
+				//get array length
+				pos = string_pos(chr(10), packet);
+				len = real(string_copy(packet, 1, pos - 1));
+				packet = string_delete(packet, 1, pos);
+			
+				// fill array
+				message = array_create(len);
+				for(var i = 0; i < len; i++)
+				{
+					type = string_char_at(packet, 1);
+					packet = string_delete(packet, 1, 1);
+					 
+					pos = string_pos(chr(10), packet);
+					val = string_copy(packet, 1, pos - 1);
+					packet = string_delete(packet, 1, pos);
+					
+					if(type == "0") 
+						val = string(val); 
+						
+					else if(type == "1") 
+						val = real(val); 
+						
+					else
+					{ 
+						show_debug_message("ERROR!!!:  unknown packet type decoding");
+						exit;
+					}
+					
+					message[i] = val;
+				}
+				 
+				break;
+			
+			case 1:
+				message = packet;
+				break;
+			
+			case 2:
+				message = real(packet);
+				break;
+			
+			default:
+				show_debug_message("ERROR!!!:  unknown packet type decoding");
+				exit;
+				break;
+		}
+		pn_on_receive(global.pn_last_date, from, to, msg_id, message); 
 	}
 	#endregion
 	
@@ -191,7 +254,7 @@ for(var i = 0; i < ds_list_size(global.pn_request_send_list); i++)
 		}
 	
 		if(string_length(r_str) > 0) 
-			pn_on_send(msg[| 1], msg[| 2]); 
+			pn_on_send(msg[| 1], msg[| 2], msg[| 3]); 
 		else
 			show_debug_message("error, can't send message: " + string(id));
 		ds_list_destroy(msg);

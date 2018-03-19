@@ -5,6 +5,7 @@
 
 var val = "mode=host";
 val += "&gamename=" + string(argument0);
+val += "&gametoken=" + string(global.pn_game_token);
 val += "&username=" + string(argument1);
 val += "&maxplayers=" + string(argument2);
 global.pn_username = argument1;
