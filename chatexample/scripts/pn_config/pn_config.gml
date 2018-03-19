@@ -2,7 +2,7 @@
 global.pn_website = "http://tizsoft.altervista.org/pollnet/"; 
 
 //game token (change this for each game you create)
-global.pn_game_token = "chat";
+global.pn_game_token = "chatapp";
 
 // check interval in seconds
 receive_interval = 2;

@@ -41,7 +41,8 @@ else
 }
 
 var val = "token=" + global.pn_token;
-val += "&to=" + string(argument1);
+if(argument1 > 0)
+	val += "&to=" + string(argument1);
 val += "&message=" + packet; 
 var msgid = http_post_string(global.pn_post, val);
  

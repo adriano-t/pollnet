@@ -30,7 +30,7 @@ draw_text(6, room_height - 25, keyboard_string + caret);
 if(keyboard_check_pressed(vk_enter))
 {
 	if(keyboard_string != "")
-		pn_send_all("chat", keyboard_string);
+		pn_send("chat", all, keyboard_string);
 	keyboard_string = "";
 }
  
