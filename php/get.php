@@ -32,10 +32,11 @@ if ($row = mysql_fetch_assoc($result))
 
     while ($row = mysql_fetch_assoc($result)) 
     { 
-        echo $row["id"] . $row_sep . $row["name"] . $row_sep . $line_sep;
+        echo $row["id"] . $word_sep . $row["name"] . $word_sep . $line_sep;
     } 
 
-     
+    
+    
     echo($msg_sep);
           
     
@@ -51,7 +52,7 @@ if ($row = mysql_fetch_assoc($result))
  
     while ($row = mysql_fetch_assoc($result)) 
     {
-        echo $row["date"] . $row_sep . $row["user_from"] . $row_sep . $row["user_to"] . $row_sep . $row["message"] . $row_sep . $line_sep;
+        echo $row["date"] . $word_sep . $row["user_from"] . $word_sep . $row["user_to"] . $word_sep . $row["message"] . $word_sep . $line_sep;
     }
 
 }

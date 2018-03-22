@@ -7,5 +7,4 @@ $password = "";
 $host = "localhost";
 $database = "my_tizsoft";
 
-
 ?>

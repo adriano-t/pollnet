@@ -20,6 +20,7 @@ global.pn_players_list = ds_list_create();
 global.pn_games_list = ds_list_create();
 global.pn_request_host = -1;
 global.pn_request_join = -1;
+global.pn_request_game_start = -1;
 global.pn_request_quit = -1;
 global.pn_request_games = -1;
 global.pn_request_message = -1;

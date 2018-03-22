@@ -17,7 +17,6 @@ if (aid == global.pn_request_message)
 		exit;
 	}
 	
-	
 	var line, wd, ld; 
 	
 	var split = string_pos(sep_mess, r_str);
@@ -100,70 +99,78 @@ if (aid == global.pn_request_message)
 		packet = string_copy(line, 1, wd - 1); 
 		line = string_delete(line, 1, wd);
 		
-		//decode message
-		
-		//id
-		pos = string_pos(chr(10), packet);
-		msg_id = string_copy(packet, 1, pos - 1);
-		packet = string_delete(packet, 1, pos);   
-		show_debug_message(msg_id);
-		
-		//type
-		type = real(string_char_at(packet, 1));
-		packet = string_delete(packet, 1, 1);
-		
-		switch(type)
+		//server message
+		if(packet == "pollnet_game_started")
 		{
-			case 0: 
-				
-				show_debug_message("TYPE ARRAY");
-				//get array length
-				pos = string_pos(chr(10), packet);
-				len = real(string_copy(packet, 1, pos - 1));
-				packet = string_delete(packet, 1, pos);
-			
-				// fill array
-				message = array_create(len);
-				for(var i = 0; i < len; i++)
-				{
-					type = string_char_at(packet, 1);
-					packet = string_delete(packet, 1, 1);
-					 
-					pos = string_pos(chr(10), packet);
-					val = string_copy(packet, 1, pos - 1);
-					packet = string_delete(packet, 1, pos);
-					
-					if(type == "0") 
-						val = string(val); 
-						
-					else if(type == "1") 
-						val = real(val); 
-						
-					else
-					{ 
-						show_debug_message("ERROR!!!:  unknown packet type decoding");
-						exit;
-					}
-					
-					message[i] = val;
-				}
-				 
-				break;
-			
-			case 1:
-				message = packet;
-				break;
-			
-			case 2:
-				message = real(packet);
-				break;
-			
-			default:
-				show_debug_message("ERROR!!!:  unknown packet type decoding");
-				exit;
-				break;
+			pn_on_game_start();	
 		}
-		pn_on_receive(global.pn_last_date, from, to, msg_id, message); 
+		//game message, decode it
+		else
+		{
+			//id
+			pos = string_pos(chr(10), packet);
+			msg_id = string_copy(packet, 1, pos - 1);
+			packet = string_delete(packet, 1, pos);   
+			show_debug_message(msg_id);
+		
+			//type
+			type = real(string_char_at(packet, 1));
+			packet = string_delete(packet, 1, 1);
+		
+			switch(type)
+			{
+				case 0: 
+				
+					show_debug_message("TYPE ARRAY");
+					//get array length
+					pos = string_pos(chr(10), packet);
+					len = real(string_copy(packet, 1, pos - 1));
+					packet = string_delete(packet, 1, pos);
+			
+					// fill array
+					message = array_create(len);
+					for(var i = 0; i < len; i++)
+					{
+						type = string_char_at(packet, 1);
+						packet = string_delete(packet, 1, 1);
+					 
+						pos = string_pos(chr(10), packet);
+						val = string_copy(packet, 1, pos - 1);
+						packet = string_delete(packet, 1, pos);
+					
+						if(type == "0") 
+							val = string(val); 
+						
+						else if(type == "1") 
+							val = real(val); 
+						
+						else
+						{ 
+							show_debug_message("ERROR!!!:  unknown packet type decoding");
+							exit;
+						}
+					
+						message[i] = val;
+					}
+				 
+					break;
+			
+				case 1:
+					message = packet;
+					break;
+			
+				case 2:
+					message = real(packet);
+					break;
+			
+				default:
+					show_debug_message("ERROR!!!:  unknown packet type decoding");
+					exit;
+					break;
+			}
+			
+			pn_on_receive(global.pn_last_date, from, to, msg_id, message);
+		}
 	}
 	#endregion
 	
@@ -193,6 +200,7 @@ if (aid == global.pn_request_join)
 } 
 #endregion
  
+ 
 
 #region host
 if (aid == global.pn_request_host)
@@ -217,6 +225,21 @@ if (aid == global.pn_request_host)
 }
 #endregion
 
+#region game start
+
+if (aid == global.pn_request_game_start)
+{
+	if(status < 0)
+	{ 
+		show_debug_message("EMPTY GAME START RESULT"); 
+		exit;
+	}
+	
+	pn_on_game_start();
+}
+
+#endregion
+
 #region quit
 if (aid == global.pn_request_quit)
 {
@@ -234,7 +257,9 @@ if (aid == global.pn_request_quit)
 	ds_map_clear(global.pn_players_map);
 	ds_list_clear(global.pn_players_list);
 	global.pn_request_create = -1;
+	global.pn_request_host = -1;
 	global.pn_request_join = -1;
+	global.pn_request_game_start = -1;
 	global.pn_request_quit = -1;
 	global.pn_request_games = -1; 
 	global.pn_request_message = -1;
@@ -314,7 +339,7 @@ if (aid == global.pn_request_games)
 		
 		ds_list_add(global.pn_games_list, game);
 	}
-	pn_on_gameslist(global.pn_games_list);
+	pn_on_games_list(global.pn_games_list);
 }
 #endregion
 

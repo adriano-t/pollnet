@@ -11,7 +11,8 @@
         "e834beae-4711-4bca-8df2-39748b02f543",
         "4a9a2efa-a461-43f7-b60f-c5e875cca98d",
         "879d2dd5-ce39-46c9-9521-91acb877715d",
-        "aadb66a0-22b7-4bf9-ae45-8afeeb45bc1c"
+        "aadb66a0-22b7-4bf9-ae45-8afeeb45bc1c",
+        "d2b78226-2d49-44b4-901a-2901662f19b3"
     ],
     "filterType": "GMScript",
     "folderName": "events",

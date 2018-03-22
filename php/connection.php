@@ -35,8 +35,7 @@ if(time() - $number > $update_interval)
     mysql_query($query) or die(mysql_error());
 }
 
-
-$row_sep = chr(1);
+$word_sep = chr(1);
 $msg_sep = chr(2);
 $line_sep = chr(3);
 
