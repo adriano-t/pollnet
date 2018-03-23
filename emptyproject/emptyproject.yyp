@@ -95,35 +95,11 @@
             }
         },
         {
-            "Key": "3ed9c232-d00a-400a-aa25-7f3fec238629",
-            "Value": {
-                "id": "0632518b-3ded-4e5a-8707-beca4702b741",
-                "resourcePath": "sprites\\spr_sentence\\spr_sentence.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
-            "Key": "41976f2c-04aa-41a8-92b9-b928ec10d11f",
-            "Value": {
-                "id": "a30d7ea1-30a7-4a50-b7b9-ee643ebbd1f3",
-                "resourcePath": "sprites\\spr_background\\spr_background.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
             "Key": "43317f3a-25c1-42ba-b5d8-0002768fbb8c",
             "Value": {
                 "id": "30166787-afb5-4408-853d-c8df4634715f",
                 "resourcePath": "views\\43317f3a-25c1-42ba-b5d8-0002768fbb8c.yy",
                 "resourceType": "GMFolder"
-            }
-        },
-        {
-            "Key": "4610899c-4ab3-4625-8ddf-215fbd8d6dc2",
-            "Value": {
-                "id": "ecd632b3-1c29-4347-80f7-6262ca2d5cd1",
-                "resourcePath": "sprites\\spr_solution\\spr_solution.yy",
-                "resourceType": "GMSprite"
             }
         },
         {
@@ -180,14 +156,6 @@
                 "id": "8dccea15-77c3-47bb-86dc-e7d53c79c9c9",
                 "resourcePath": "scripts\\pn_on_host\\pn_on_host.yy",
                 "resourceType": "GMScript"
-            }
-        },
-        {
-            "Key": "59bc2742-5fa8-4dad-9caa-6875b8d7508d",
-            "Value": {
-                "id": "fdd3f7f4-407b-4b8c-afe7-1a75f3eac963",
-                "resourcePath": "sprites\\spr_win\\spr_win.yy",
-                "resourceType": "GMSprite"
             }
         },
         {
@@ -311,14 +279,6 @@
             }
         },
         {
-            "Key": "9c531b04-6a41-4ad6-9f83-28be10699c7b",
-            "Value": {
-                "id": "9bb83507-c944-40c7-83ea-517fa6a1492e",
-                "resourcePath": "sprites\\spr_host\\spr_host.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
             "Key": "9e35b151-42fb-4938-aac9-a3f9a56419e6",
             "Value": {
                 "id": "8cd2b53a-c330-4736-8ee0-fe57c3b1641f",
@@ -367,14 +327,6 @@
             }
         },
         {
-            "Key": "b7ecae86-8915-4d8c-a813-a33ac113eab1",
-            "Value": {
-                "id": "d6bdce2f-aaa4-4b52-ae98-35d37b6be974",
-                "resourcePath": "sprites\\spr_join\\spr_join.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
             "Key": "c5560146-e3f6-4342-800c-9de7d25944c9",
             "Value": {
                 "id": "6288edb4-5b4d-4888-aa5f-82f48cac07cb",
@@ -407,14 +359,6 @@
             }
         },
         {
-            "Key": "e2e90229-f171-4097-9763-166f16ac4921",
-            "Value": {
-                "id": "7359653c-a139-4591-aa2c-65e974df72fc",
-                "resourcePath": "sprites\\spr_start\\spr_start.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
             "Key": "e3fcefbd-c970-468e-b5ca-77a319e1dafc",
             "Value": {
                 "id": "002f6d82-d160-40aa-bf00-a9c310aa73fe",
@@ -439,14 +383,6 @@
             }
         },
         {
-            "Key": "eafaef23-73b7-4e7c-b079-80e828cac14e",
-            "Value": {
-                "id": "2725dfb9-347d-4ec1-8439-227cf29ee9dc",
-                "resourcePath": "sprites\\spr_letter\\spr_letter.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
             "Key": "f418569b-3bdd-4706-a0e4-364317f54032",
             "Value": {
                 "id": "fe458d3c-84e9-4228-9712-eae8c0b4ae7d",
@@ -468,22 +404,6 @@
                 "id": "80493adc-f4bd-4b29-b46c-0318e01ad546",
                 "resourcePath": "scripts\\pn_game_start\\pn_game_start.yy",
                 "resourceType": "GMScript"
-            }
-        },
-        {
-            "Key": "fc4f1649-f278-4365-9e5b-b94015e7383d",
-            "Value": {
-                "id": "f3fb396a-ff01-4f9b-ac49-27edf20706d0",
-                "resourcePath": "sprites\\spr_hangman\\spr_hangman.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
-            "Key": "ff0e712f-c24a-4260-8701-dfc1caf29805",
-            "Value": {
-                "id": "45518a34-7a3a-40a2-8d40-9bd083533eae",
-                "resourcePath": "sprites\\spr_x\\spr_x.yy",
-                "resourceType": "GMSprite"
             }
         }
     ],
