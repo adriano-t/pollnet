@@ -1,7 +1,7 @@
 <?php
 
-$db = mysql_connect($host, $dbusername, $password) or die("Errore durante la connessione al database");
-mysql_select_db($database, $db) or die("Errore durante la selezione del database");
+$db = mysql_connect($host, $dbusername, $password) or die("Error: can't connect to database");
+mysql_select_db($database, $db) or die("Error: Can't select database");
 
 function randomString($length = 10) 
 {

@@ -2,7 +2,7 @@
 
 if(!isset($_POST["token"]) || ! isset($_POST["date"]))
 {
-    echo("missing token or date");
+    echo("Error: missing token or date");
     exit;
 }
 require_once "config.php";

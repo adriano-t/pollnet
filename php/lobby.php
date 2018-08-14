@@ -31,7 +31,6 @@ if($mode == "host")
 } 
 elseif ($mode == "manage")
 {
-    
     //manage players
     if(!isset($_POST["token"])  || !isset($_POST["started"]))
         exit;
