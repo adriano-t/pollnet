@@ -21,7 +21,7 @@ $password = ""; // your mysql password
 $host = "localhost";
 $database = "my_tizsoft"; // database name
 
-$update_interval = 3; //update interval in seconds
+$update_interval = 2; //update interval in seconds
 ```
 ### 2) PHP Installation
 
