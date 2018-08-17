@@ -49,7 +49,7 @@ Instantiate `obj_pollnet` before calling any function
 * `pn_host` : create a new lobby
 * `pn_game_start` : called by the host to start the game (use it when you reached the desired number of players in the lobby), since this moment, new players can't join the game
 * `pn_join` : join an existing lobby
-* `pn_request_games_list' : get all the online lobbies (created by other players)
+* `pn_request_games_list` : get all the online lobbies (created by other players)
 * `pn_quit` : leave a lobby
 * `pn_send` : send a message to one or all players (set the second parameter to `all`)
 	example: `pn_send("health", all, 80)
@@ -57,8 +57,9 @@ Instantiate `obj_pollnet` before calling any function
 ### Events
 All the scripts under `events` group are called when something happens
 For example:
-	* `pn_on_host` is called when `pn_host` has success and you created a new lobby.
-	* `pn_on_join` is called when `pn_join` has success and you joined the lobby.
+
+* `pn_on_host` is called when `pn_host` has success and you created a new lobby.
+* `pn_on_join` is called when `pn_join` has success and you joined the lobby.
 
 # License
 
