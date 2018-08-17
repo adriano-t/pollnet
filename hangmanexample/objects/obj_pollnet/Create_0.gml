@@ -27,5 +27,6 @@ global.pn_request_message = -1;
 global.pn_admin_id = -1;
 sep_word = chr(1);
 sep_mess = chr(2);
-sep_line = chr(3)
+sep_line = chr(3);
+sep_packet = chr(4);
 token_size = 20;

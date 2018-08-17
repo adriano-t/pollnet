@@ -30,6 +30,7 @@
     "option_xbone_splash_screen_colour": {
         "Value": 4282795590
     },
+    "option_xbone_stats_system": 0,
     "option_xbone_texture_page": "2048x2048",
     "option_xbone_title_id": "",
     "option_xbone_version": {
@@ -37,5 +38,6 @@
         "major": 1,
         "minor": 0,
         "revision": 0
-    }
+    },
+    "option_xbone_x_title_memory": 5
 }

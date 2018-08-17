@@ -8,9 +8,11 @@ if(global.turn == global.pn_player_id)
 	// send the letter to the host
 	if(button_pressed(spr_letter, x, y + 64))
 	{
-		var letter = string_upper(string_letters(get_string("Type 1 letter", "")));
-		if(string_length(letter) == 1)
+		var s = get_string("Type 1 letter", "");
+		show_message(s);
+		if(string_length(s) == 1)
 		{
+			var letter = string_upper(string_letters(s));
 			pn_send("letter", global.pn_admin_id, letter);
 			global.turn = noone;
 		}

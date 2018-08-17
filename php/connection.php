@@ -14,23 +14,38 @@ function randomString($length = 10)
     return $s;
 }
 
+function getUserIP() 
+{
+    if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+	{
+        if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',')>0)
+		{
+            $addr = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return trim($addr[0]);
+        }
+		else
+            return $_SERVER['HTTP_X_FORWARDED_FOR']; 
+    }
+    else
+        return $_SERVER['REMOTE_ADDR'];
+}
 
-$number = file_get_contents('pollnet_update.txt'); 
+$number = file_get_contents($prefix."_update.txt"); 
 if(time() - $number > $update_interval)
 { 
-    file_put_contents('pollnet_update.txt', time()); 
+    file_put_contents($prefix."_update.txt", time()); 
 
     //delete players and messages
     $query = "DELETE pu, pm
-    FROM pollnet_users pu
-    LEFT JOIN pollnet_messages pm ON pu.id = pm.user_from
+    FROM ".$prefix."_users pu
+    LEFT JOIN ".$prefix."_messages pm ON pu.id = pm.user_from
     WHERE pu.date < NOW() - INTERVAL 10 SECOND"; 
     mysql_query($query) or die(mysql_error());
  
     //delete empty games
-    $query = "DELETE FROM pollnet_games
+    $query = "DELETE FROM ".$prefix."_games
     WHERE id NOT IN (
-        SELECT game FROM pollnet_users 
+        SELECT game FROM ".$prefix."_users 
     )"; 
     mysql_query($query) or die(mysql_error());
 }

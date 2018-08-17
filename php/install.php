@@ -6,11 +6,11 @@ $db = mysql_connect($host, $dbusername, $password) or die("Errore durante la con
 mysql_select_db($database, $db) or die("Errore durante la selezione del database");
 
 
-mysql_query("DROP TABLE IF EXISTS pollnet_games") or die(mysql_error());
-mysql_query("DROP TABLE IF EXISTS pollnet_users") or die(mysql_error());
-mysql_query("DROP TABLE IF EXISTS pollnet_messages") or die(mysql_error()); 
+mysql_query("DROP TABLE IF EXISTS ".$prefix."_games") or die(mysql_error());
+mysql_query("DROP TABLE IF EXISTS ".$prefix."_users") or die(mysql_error());
+mysql_query("DROP TABLE IF EXISTS ".$prefix."_messages") or die(mysql_error()); 
 
-$query = "CREATE TABLE pollnet_games(
+$query = "CREATE TABLE ".$prefix."_games(
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     gametoken VARCHAR(50) NOT NULL,
@@ -21,20 +21,21 @@ $query = "CREATE TABLE pollnet_games(
 mysql_query($query) or die(mysql_error());
 echo("games table created<br/>");
 
-$query = "CREATE TABLE pollnet_users(
+$query = "CREATE TABLE ".$prefix."_users(
     id BIGINT UNSIGNED  AUTO_INCREMENT PRIMARY KEY,
+	ip BINARY(16) NOT NULL,
     token CHAR(20) NOT NULL ,
     name VARCHAR(50) NOT NULL,
     admin BOOLEAN NOT NULL,
     game BIGINT UNSIGNED  NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT game_fk
-        FOREIGN KEY (game) REFERENCES pollnet_games(id) 
+        FOREIGN KEY (game) REFERENCES ".$prefix."_games(id) 
 );";
 mysql_query($query) or die(mysql_error());
 echo("users table created<br/>");
 
-$query = "CREATE TABLE pollnet_messages(
+$query = "CREATE TABLE ".$prefix."_messages(
     id BIGINT UNSIGNED  AUTO_INCREMENT PRIMARY KEY,
     game BIGINT UNSIGNED  NOT NULL,
     user_from BIGINT UNSIGNED  NOT NULL,
@@ -42,11 +43,11 @@ $query = "CREATE TABLE pollnet_messages(
     message TEXT NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
     CONSTRAINT game_fk
-        FOREIGN KEY (game) REFERENCES pollnet_games(id),
+        FOREIGN KEY (game) REFERENCES ".$prefix."_games(id),
     CONSTRAINT user_from_fk
-        FOREIGN KEY (user_from) REFERENCES pollnet_users(id),
+        FOREIGN KEY (user_from) REFERENCES ".$prefix."_users(id),
     CONSTRAINT user_to_fk
-        FOREIGN KEY (user_to) REFERENCES pollnet_users(id)
+        FOREIGN KEY (user_to) REFERENCES ".$prefix."_users(id)
 );";
 mysql_query($query) or die(mysql_error());
 echo("messages table created<br/>");

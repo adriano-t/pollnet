@@ -1,24 +1,24 @@
-/// @description send a message to a specific player
+/// @description send a message to a specific player or all players
 /// @param message_id
 /// @param to
 /// @param message
 
-var packet = string(argument0) + chr(10);
+var packet = string(argument0) + obj_pollnet.sep_packet;
 
 if(is_array(argument2))
 {
 	packet += "0";
 	var len = array_length_1d(argument2);
-	packet += string(len) + chr(10);
+	packet += string(len) + obj_pollnet.sep_packet;
 	for(var i = 0; i < len; i++)
 	{
 		var val = argument2[i];
 		
 		if(is_string(val)) 
-			packet += "1" + val + chr(10);
+			packet += "1" + val + obj_pollnet.sep_packet;
 		
 		else if(is_real(val)) 
-			packet += "2" + string(val) + chr(10); 
+			packet += "2" + string(val) + obj_pollnet.sep_packet; 
 			
 		else
 		{

@@ -12,7 +12,7 @@ require_once "connection.php";
 $token = mysql_real_escape_string($_POST["token"]);
 $date = mysql_real_escape_string($_POST["date"]);
 
-$query = "SELECT id, game FROM pollnet_users WHERE token = '$token'";
+$query = "SELECT id, game FROM ".$prefix."_users WHERE token = '$token'";
 $result = mysql_query($query) or die(mysql_error());
 
 //only take the first result
@@ -22,17 +22,17 @@ if ($row = mysql_fetch_assoc($result))
     $game = $row["game"];
 
     //update user
-    $query = "UPDATE pollnet_users SET date = NOW() WHERE token = '$token'";
+    $query = "UPDATE ".$prefix."_users SET date = NOW() WHERE token = '$token'";
     $result = mysql_query($query) or die(mysql_error());
 
     
     //get players list
-    $query = "SELECT id, name FROM pollnet_users WHERE game = '$game' AND token != '$token'";
+    $query = "SELECT id, ip, name FROM ".$prefix."_users WHERE game = '$game' AND token != '$token'";
     $result = mysql_query($query) or die(mysql_error());
 
     while ($row = mysql_fetch_assoc($result)) 
     { 
-        echo $row["id"] . $word_sep . $row["name"] . $word_sep . $line_sep;
+        echo $row["id"] . $word_sep  . inet_ntop($row["ip"]) . $word_sep . $row["name"] . $word_sep . $line_sep;
     } 
 
     
@@ -42,7 +42,7 @@ if ($row = mysql_fetch_assoc($result))
     
     //get messages list
     $query = "SELECT date, user_from, user_to, message
-    FROM pollnet_messages 
+    FROM ".$prefix."_messages 
     WHERE user_from <> '$id'
         AND game = '$game' 
         AND (user_to = '$id' OR user_to is NULL)

@@ -15,16 +15,17 @@ if($mode == "host")
     $gametoken = mysql_real_escape_string($_POST["gametoken"]);
     $username = mysql_real_escape_string($_POST["username"]);
     $maxplayers = mysql_real_escape_string($_POST["maxplayers"]);
+	$ip = mysql_real_escape_string(inet_pton(getUserIP()));
     $token = randomString(20);
     
-    $query = "INSERT INTO pollnet_games(name, gametoken, maxplayers) 
+    $query = "INSERT INTO ".$prefix."_games(name, gametoken, maxplayers) 
     VALUES('$gamename', '$gametoken', '$maxplayers')";
     mysql_query($query) or die(mysql_error());
 
     $gameid = mysql_insert_id();
 
-    $query = "INSERT INTO pollnet_users(token, name, game, admin) 
-    VALUES('$token', '$username', '$gameid', TRUE)";
+    $query = "INSERT INTO ".$prefix."_users(ip, token, name, game, admin) 
+    VALUES('$ip', '$token', '$username', '$gameid', TRUE)";
     mysql_query($query) or die(mysql_error());
 
     echo($token . $word_sep . mysql_insert_id());
@@ -39,7 +40,7 @@ elseif ($mode == "manage")
     $token = mysql_real_escape_string($_POST["token"]); 
 
     //verify user
-    $query = "SELECT id, game FROM pollnet_users WHERE token = '$token'";
+    $query = "SELECT id, game FROM ".$prefix."_users WHERE token = '$token'";
     $result = mysql_query($query) or die(mysql_error());
     
     //only take the first result
@@ -50,12 +51,12 @@ elseif ($mode == "manage")
     
         //send start message to all the players
         $message = "pollnet_game_started";
-        $query = "INSERT INTO pollnet_messages(message, user_from, game)
+        $query = "INSERT INTO ".$prefix."_messages(message, user_from, game)
         VALUES('$message', '$id', '$game')"; 
         mysql_query($query) or die(mysql_error());
 
         //block new joins
-        $query = "UPDATE pollnet_games SET started = '$started' WHERE id = '$game'";
+        $query = "UPDATE ".$prefix."_games SET started = '$started' WHERE id = '$game'";
         mysql_query($query) or die(mysql_error());
  
         echo("0");
@@ -70,14 +71,14 @@ elseif ($mode == "join")
     $gameid = mysql_real_escape_string($_POST["gameid"]);
     $username = mysql_real_escape_string($_POST["username"]);
     $token = randomString(20);
-
-    $result = mysql_query("SELECT count(*) FROM pollnet_users WHERE game = '$gameid'")or die(mysql_error());
+	
+    $result = mysql_query("SELECT count(*) FROM ".$prefix."_users WHERE game = '$gameid'")or die(mysql_error());
     $count = mysql_result($result, 0);
 
-    //single line
-    $query = " SELECT maxplayers, usr.num
-    FROM pollnet_games 
-    JOIN (SELECT count(*) as num from pollnet_users WHERE game = '$gameid') as usr
+    //check max amount of players reached
+    $query = "SELECT maxplayers, usr.num
+    FROM ".$prefix."_games 
+    JOIN (SELECT count(*) AS num FROM ".$prefix."_users WHERE game = '$gameid') AS usr
     WHERE id = '$gameid'";
 
     $result = mysql_query($query) or die(mysql_error());
@@ -85,10 +86,25 @@ elseif ($mode == "join")
     $count = mysql_result($result, 0, 1);
     if($count < $max)
     {
-        $query = "INSERT INTO pollnet_users(token, name, game, admin) 
-        VALUES('$token', '$username', '$gameid', FALSE)";
+		// insert the new player
+		$ip = mysql_real_escape_string(inet_pton(getUserIP()));
+        $query = "INSERT INTO ".$prefix."_users(ip, token, name, game, admin) 
+        VALUES('$ip', '$token', '$username', '$gameid', FALSE)";
         mysql_query($query) or die(mysql_error());
-        echo($token . $word_sep . mysql_insert_id());
+		$player_id = mysql_insert_id();
+		
+		//get admin ip
+		$query = "SELECT ip
+        FROM ".$prefix."_users 
+        WHERE admin = TRUE AND game = '$gameid';";
+		$result = mysql_query($query) or die(mysql_error());
+
+		$admin_ip = "127.0.0.1";
+		if(mysql_num_rows($result) != 0) 
+			$admin_ip = inet_ntop(mysql_result($result, 0, 0));
+		
+		
+        echo($token . $word_sep . $player_id . $word_sep . $admin_ip);
     }
 }
 elseif ($mode == "quit")
@@ -98,7 +114,7 @@ elseif ($mode == "quit")
         exit;
 
     $token = mysql_real_escape_string($_POST["token"]);
-    $query = " DELETE FROM pollnet_users WHERE token = '$token'";
+    $query = " DELETE FROM ".$prefix."_users WHERE token = '$token'";
     $result = mysql_query($query) or die(mysql_error());
     echo("0");
 }
@@ -111,16 +127,16 @@ elseif ($mode == "gameslist")
     $gametoken = mysql_real_escape_string($_POST["gametoken"]);
 
     $query = "SELECT pg.id, adm.id as admin, name, num, maxplayers
-    FROM pollnet_games pg
+    FROM ".$prefix."_games pg
     JOIN (
         SELECT game, COUNT(game) as num 
-        FROM pollnet_users 
+        FROM ".$prefix."_users 
         GROUP BY game
         ) usr 
     ON pg.id = usr.game
     JOIN (
         SELECT id, game
-        FROM pollnet_users 
+        FROM ".$prefix."_users 
         WHERE admin = TRUE
         ) adm 
     ON pg.id = adm.game

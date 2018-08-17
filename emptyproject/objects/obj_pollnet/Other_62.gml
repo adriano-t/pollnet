@@ -7,7 +7,7 @@ if (status == 1)
 } 
 	
 var r_str = ds_map_find_value(async_load, "result");
- 
+
 
 #region process messages
 if (aid == global.pn_request_message)
@@ -18,7 +18,6 @@ if (aid == global.pn_request_message)
 		exit;
 	}
 	
-	var line, wd, ld; 
 	
 	var split = string_pos(sep_mess, r_str);
 	var r_players = string_copy(r_str, 1, split - 1);
@@ -26,24 +25,14 @@ if (aid == global.pn_request_message)
 	
 	#region split players 
 	
-	var player_id, player_name;
+	var lines = pn_string_split(r_players, sep_line);
 	
-	ld = string_pos(sep_line, r_players);
-	while(ld)
-	{
-		line = string_copy(r_players, 1, ld - 1);
-		r_players = string_delete(r_players, 1, ld);
-		ld = string_pos(sep_line, r_players);
-		
-		// id
-		wd = string_pos(sep_word, line);
-		player_id = real(string_copy(line, 1, wd - 1));
-		line = string_delete(line, 1, wd);
-	  
-		// name
-		wd = string_pos(sep_word, line);
-		player_name = string_copy(line, 1, wd - 1); 
-		line = string_delete(line, 1, wd);
+	for(var i = 0; i < array_length_1d(lines); i++)
+	{  
+		var p_data = pn_string_split(lines[i], sep_word);
+		var player_id = real(p_data[0]);
+		var player_ip = p_data[1];
+		var player_name = p_data[2];
 		
 		ds_map_add(global.pn_players_checkmap, player_id, player_name); 
 		//new player joined
@@ -51,9 +40,10 @@ if (aid == global.pn_request_message)
 		{
 			ds_map_add(global.pn_players_map, player_id, player_name);
 			ds_list_add(global.pn_players_list, player_id);
-			pn_on_player_join(player_id, player_name);
+			pn_on_player_join(player_id, player_name, player_ip);
 		}
 	}
+	 
 	
 	//players who quit
 	for(var i = 0; i < ds_list_size(global.pn_players_list); i++)
@@ -72,34 +62,17 @@ if (aid == global.pn_request_message)
 	
 	#region split messages 
 	
-	var from, to, message, packet, type, msg_id, pos, len, val;
 	
-	ld = string_pos(sep_line, r_message); 
-	while(ld)
-	{
-		line = string_copy(r_message, 1, ld - 1);
-		r_message = string_delete(r_message, 1, ld);
-		ld = string_pos(sep_line, r_message); 
+	lines = pn_string_split(r_message, sep_line);
 	
-		// date
-		wd = string_pos(sep_word, line);
-		global.pn_last_date = string_copy(line, 1, wd - 1);
-		line = string_delete(line, 1, wd);
-	  
-		// from
-		wd = string_pos(sep_word, line);
-		from = real(string_copy(line, 1, wd - 1)); 
-		line = string_delete(line, 1, wd);
-	 
-		// to
-		wd = string_pos(sep_word, line);
-		to = string_length(string_copy(line, 1, wd - 1)) > 0; 
-		line = string_delete(line, 1, wd);
-	 
-		// message
-		wd = string_pos(sep_word, line);
-		packet = string_copy(line, 1, wd - 1); 
-		line = string_delete(line, 1, wd);
+	for(var i = 0; i < array_length_1d(lines); i++)
+	{  
+		var m_data = pn_string_split(lines[i], sep_word);
+		
+		global.pn_last_date = m_data[0];
+		var from = real(m_data[1]);
+		var to = real(m_data[2]);
+		var packet = m_data[3];
 		
 		//server message
 		if(packet == "pollnet_game_started")
@@ -109,35 +82,26 @@ if (aid == global.pn_request_message)
 		//game message, decode it
 		else
 		{
-			//id
-			pos = string_pos(chr(10), packet);
-			msg_id = string_copy(packet, 1, pos - 1);
-			packet = string_delete(packet, 1, pos);   
-		
-			//type
-			type = real(string_char_at(packet, 1));
-			packet = string_delete(packet, 1, 1);
-		
+			var gm_data = pn_string_split(packet, sep_packet);
+			
+			var msg_id = gm_data[0];
+			var type = real(gm_data[1]);
+			 
 			switch(type)
 			{
 				case 0: 
 					show_debug_message("TYPE ARRAY");
-					//get array length
-					pos = string_pos(chr(10), packet);
-					len = real(string_copy(packet, 1, pos - 1));
-					packet = string_delete(packet, 1, pos);
-			
-					// fill array
-					message = array_create(len);
-					for(var i = 0; i < len; i++)
-					{
-						type = string_char_at(packet, 1);
-						packet = string_delete(packet, 1, 1);
-					 
-						pos = string_pos(chr(10), packet);
-						val = string_copy(packet, 1, pos - 1);
-						packet = string_delete(packet, 1, pos);
 					
+					var len = real(gm_data[2]);
+					 
+					// fill array
+					var message = array_create(len);
+					for(var j = 0; j < len; j++)
+					{
+						var s = gm_data[3 + j]; 
+						type = string_char_at(s, 1);
+						var val = string_delete(packet, 1, 1);
+					   
 						if(type == "0") 
 							val = string(val); 
 						
@@ -150,19 +114,19 @@ if (aid == global.pn_request_message)
 							exit;
 						}
 					
-						message[i] = val;
+						message[j] = val;
 					}
-				 
+					
 					break;
 			
 				case 1:
 					show_debug_message("TYPE STRING");
-					message = packet;
+					message = gm_data[2];
 					break;
 			
 				case 2:
 					show_debug_message("TYPE REAL");
-					message = real(packet);
+					message = real(gm_data[2]);
 					break;
 			
 				default:
@@ -173,6 +137,7 @@ if (aid == global.pn_request_message)
 			
 			pn_on_receive(global.pn_last_date, from, to, msg_id, message);
 		}
+	
 	}
 	#endregion
 	
@@ -190,27 +155,26 @@ if (aid == global.pn_request_join)
 		exit;
 	}
 	
-	var token;
-	var p = string_pos(sep_word, r_str);
-	var token = string_copy(r_str, 1, p - 1);
-	var player_id = string_delete(r_str, 1, p);
-	
+	var data = pn_string_split(r_str, sep_word);
+	var token = data[0];
+	var player_id = real(data[1]);
+	var admin_ip = data[2];
+	 
+	  
 	if(string_length(token) == token_size)
 	{
 		global.pn_token = token;
 		show_debug_message("join token: " + token);
 		global.pn_last_date = string(current_year) + "-" + string(current_month) + "-" + string(current_day) + " " +
 		string(current_hour) + "-" + string(current_minute) + "-" + string(current_second);
-		pn_on_join();
+		global.pn_player_id = real(player_id);
+		pn_on_join(admin_ip);
 		alarm[0] = 1;
 	}
 	
-	global.pn_player_id = real(player_id);
 } 
 #endregion
  
- 
-
 #region host
 if (aid == global.pn_request_host)
 {
@@ -220,10 +184,9 @@ if (aid == global.pn_request_host)
 		exit;
 	}
 	
-	var token;
-	var p = string_pos(sep_word, r_str);
-	var token = string_copy(r_str, 1, p - 1);
-	var player_id = string_delete(r_str, 1, p);
+	var data = pn_string_split(r_str, sep_word);
+	var token = data[0];
+	var player_id = data[1]; 
 	
 	if(string_length(token) == token_size)
 	{
@@ -232,12 +195,14 @@ if (aid == global.pn_request_host)
 		
 		global.pn_last_date = string(current_year) + "-" + string(current_month) + "-" + string(current_day) + " " +
 		string(current_hour) + "-" + string(current_minute) + "-" + string(current_second);
+		
+		global.pn_player_id = real(player_id);
+		global.pn_admin_id = global.pn_player_id;
+		
 		pn_on_host();
 		alarm[0] = 1;
 	}
 	
-	global.pn_player_id = real(player_id);
-	global.pn_admin_id = global.pn_player_id;
 }
 #endregion
 
@@ -318,48 +283,31 @@ if (aid == global.pn_request_games)
 		exit;
 	}
 	
-	var game, gameid, admin_id, gamename, online_players, max_players;
 	
-	ld = string_pos(sep_line, r_str); 
-	while(ld)
-	{ 
-		game = ds_list_create();
-		line = string_copy(r_str, 1, ld - 1); 
-		r_str = string_delete(r_str, 1, ld);
-		ld = string_pos(sep_line, r_str);  
-	
-		// game id
-		wd = string_pos(sep_word, line);
-		gameid = real(string_copy(line, 1, wd - 1));
-		line = string_delete(line, 1, wd);
-		ds_list_add(game, gameid);
-		 
-		// admin id
-		wd = string_pos(sep_word, line);
-		admin_id = real(string_copy(line, 1, wd - 1));
-		line = string_delete(line, 1, wd);
-		ds_list_add(game, admin_id);
+	var lines = pn_string_split(r_str, sep_line);
+	for(var i = 0; i < array_length_1d(lines); i++)
+	{
+		var game = ds_list_create();
+		var g_data = pn_string_split(lines[i], sep_word);
 		
-		// game name
-		wd = string_pos(sep_word, line);
-		gamename = string_copy(line, 1, wd - 1);
-		line = string_delete(line, 1, wd);
-		ds_list_add(game, gamename);
+		var gameid = real(g_data[0]);
+		ds_list_add(game, gameid); 
 		
-		// online players
-		wd = string_pos(sep_word, line);
-		online_players = real(string_copy(line, 1, wd - 1));
-		line = string_delete(line, 1, wd);
-		ds_list_add(game, online_players);
+		var admin_id = real(g_data[1]);
+		ds_list_add(game, admin_id); 
 		
-		// max players
-		wd = string_pos(sep_word, line);
-		max_players = real(string_copy(line, 1, wd - 1));
-		line = string_delete(line, 1, wd);
-		ds_list_add(game, max_players);
+		var game_name = g_data[2];
+		ds_list_add(game, game_name); 
+		
+		var online_players = real(g_data[3]);
+		ds_list_add(game, online_players); 
+		
+		var max_players = real(g_data[4]);
+		ds_list_add(game, max_players); 
 		
 		ds_list_add(global.pn_games_list, game);
 	}
+	
 	pn_on_games_list(global.pn_games_list);
 }
 #endregion
