@@ -67,6 +67,7 @@ For example:
 * Create an object that lists all the available games online and allows to join
 * Create a button to host a new game
 * use `pn_send` to send messages with an id of your choice
+* with `pn_send` you can send a `string` a `number` or an `array`
 * inside the script `pn_on_receive` use a switch statement to handle the messages
 * don't send too much data, this library uses HTTP connection / mysql database, to avoid performance issues.
 
