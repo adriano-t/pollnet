@@ -1,5 +1,6 @@
 # PollNet v0.1
-Http multiplayer game library for GMStudio2
+Http multiplayer game library for GMStudio2.
+Pollnet is designed to create lobbies/chats, or turn based games and it's not suitable for realtime games.
 
 ## Table of contents
 
@@ -56,10 +57,19 @@ Instantiate `obj_pollnet` before calling any function
 
 ### Events
 All the scripts under `events` group are called when something happens
+
 For example:
 
 * `pn_on_host` is called when `pn_host` has success and you created a new lobby.
 * `pn_on_join` is called when `pn_join` has success and you joined the lobby.
+
+### Tips
+* Create an object that lists all the available games online and allows to join
+* Create a button to host a new game
+* use `pn_send` to send messages with an id of your choice
+* inside the script `pn_on_receive` use a switch statement to handle the messages
+* don't send too much data, this library uses HTTP connection / mysql database, to avoid performance issues.
+
 
 # License
 
