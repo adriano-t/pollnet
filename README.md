@@ -22,17 +22,17 @@ $update_interval = 3; //update interval in seconds
   
 ## 3a) Import the extension in GMStudio2
 * Create a new project
-* Drag and drop `extension.yymp`
+* Drag and drop the extension file (`pollnet_extension.yymp`) into GMStudio2
 
-## 3b) Or open the example project
+## 3b) Or open an example project
 `./chatexample/` directory
+`./hangman/` directory
 
 
-## 4) Configure GMStudio2
+## 4) GMStudio2 Configuration
 * Open the `pn_config` script inside GMStudio2
-* and change the following line, to your website url
-`global.pn_website = "http://tizsoft.altervista.org/pollnet/";`
-
+* and change the following line, to your website pollnet directory url
+`global.pn_website = "http://my-awesome-website.com/pollnet/";`
 
 License
 --------
