@@ -8,7 +8,6 @@ if (status == 1)
 	
 var r_str = ds_map_find_value(async_load, "result");
 
-
 #region process messages
 if (aid == global.pn_request_message)
 {
@@ -26,7 +25,7 @@ if (aid == global.pn_request_message)
 	#region split players 
 	
 	var lines = pn_string_split(r_players, sep_line);
-	
+	 
 	for(var i = 0; i < array_length_1d(lines); i++)
 	{  
 		var p_data = pn_string_split(lines[i], sep_word);
@@ -61,7 +60,7 @@ if (aid == global.pn_request_message)
 	#endregion
 	
 	#region split messages 
-	
+	 
 	
 	lines = pn_string_split(r_message, sep_line);
 	
@@ -82,31 +81,32 @@ if (aid == global.pn_request_message)
 		//game message, decode it
 		else
 		{
+			show_debug_message("packet:" + packet);
 			var gm_data = pn_string_split(packet, sep_packet);
 			
 			var msg_id = gm_data[0];
-			var type = real(gm_data[1]);
-			 
+			var type = real(gm_data[1]); 
+			  
 			switch(type)
 			{
 				case 0: 
+				
 					show_debug_message("TYPE ARRAY");
 					
-					var len = real(gm_data[2]);
-					 
+					var len = real(gm_data[2]); 
 					// fill array
 					var message = array_create(len);
+					var val;
 					for(var j = 0; j < len; j++)
 					{
-						var s = gm_data[3 + j]; 
-						type = string_char_at(s, 1);
-						var val = string_delete(packet, 1, 1);
-					   
+						var sub_type = gm_data[3 + j]; 
+						j++; 
+						
 						if(type == "0") 
-							val = string(val); 
+							val = string(gm_data[3 + j]); 
 						
 						else if(type == "1") 
-							val = real(val); 
+							val = real(gm_data[3 + j]); 
 						
 						else
 						{ 
@@ -182,8 +182,7 @@ if (aid == global.pn_request_host)
 	{ 
 		pn_on_error(5, "empty host result, check php installation"); 
 		exit;
-	}
-	
+	} 
 	var data = pn_string_split(r_str, sep_word);
 	var token = data[0];
 	var player_id = data[1]; 
@@ -283,33 +282,36 @@ if (aid == global.pn_request_games)
 		exit;
 	}
 	
-	
-	var lines = pn_string_split(r_str, sep_line);
-	for(var i = 0; i < array_length_1d(lines); i++)
-	{
-		var game = ds_list_create();
-		var g_data = pn_string_split(lines[i], sep_word);
+	if(r_str != "0")
+	{ 
+		var lines = pn_string_split(r_str, sep_line); 
+		for(var i = 0; i < array_length_1d(lines); i++)
+		{
+			var game = ds_list_create();
+			var g_data = pn_string_split(lines[i], sep_word);
+			
+			var gameid = real(g_data[0]);
+			ds_list_add(game, gameid); 
 		
-		var gameid = real(g_data[0]);
-		ds_list_add(game, gameid); 
+			var admin_id = real(g_data[1]);
+			ds_list_add(game, admin_id); 
 		
-		var admin_id = real(g_data[1]);
-		ds_list_add(game, admin_id); 
+			var game_name = g_data[2];
+			ds_list_add(game, game_name); 
 		
-		var game_name = g_data[2];
-		ds_list_add(game, game_name); 
+			var online_players = real(g_data[3]);
+			ds_list_add(game, online_players); 
 		
-		var online_players = real(g_data[3]);
-		ds_list_add(game, online_players); 
+			var max_players = real(g_data[4]);
+			ds_list_add(game, max_players); 
 		
-		var max_players = real(g_data[4]);
-		ds_list_add(game, max_players); 
-		
-		ds_list_add(global.pn_games_list, game);
+			ds_list_add(global.pn_games_list, game);
+		}
 	}
 	
 	pn_on_games_list(global.pn_games_list);
 }
 #endregion
+
 
 

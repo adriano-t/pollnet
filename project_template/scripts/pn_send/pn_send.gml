@@ -2,12 +2,12 @@
 /// @param message_id
 /// @param to
 /// @param message
-
+ 
 var packet = string(argument0) + obj_pollnet.sep_packet;
 
 if(is_array(argument2))
 {
-	packet += "0";
+	packet += "0" + obj_pollnet.sep_packet;
 	var len = array_length_1d(argument2);
 	packet += string(len) + obj_pollnet.sep_packet;
 	for(var i = 0; i < len; i++)
@@ -15,10 +15,10 @@ if(is_array(argument2))
 		var val = argument2[i];
 		
 		if(is_string(val)) 
-			packet += "1" + val + obj_pollnet.sep_packet;
+			packet += "1" + obj_pollnet.sep_packet +  val + obj_pollnet.sep_packet;
 		
 		else if(is_real(val)) 
-			packet += "2" + string(val) + obj_pollnet.sep_packet; 
+			packet += "2" + obj_pollnet.sep_packet + string(val) + obj_pollnet.sep_packet; 
 			
 		else
 		{
@@ -29,10 +29,10 @@ if(is_array(argument2))
 }
 
 else if(is_string(argument2)) 
-	packet += "1" + argument2; 
+	packet += "1" + obj_pollnet.sep_packet +  argument2; 
 	
 else if(is_real(argument2)) 
-	packet += "2" + string(argument2); 
+	packet += "2" + obj_pollnet.sep_packet + string(argument2); 
 	
 else
 {
