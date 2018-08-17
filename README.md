@@ -64,6 +64,14 @@ For example:
 * `pn_on_host` is called when `pn_host` has success and you created a new lobby.
 * `pn_on_join` is called when `pn_join` has success and you joined the lobby.
 
+### Global Variables
+* `global.pn_last_date`: last message date 
+* `global.pn_players_map`: ds_map between players id and name
+* `global.pn_players_list`: ds_list of players id
+* `global.pn_games_list`: ds_list of games
+* `global.pn_admin_id`: player id of the host
+
+
 ### Tips
 * Create an object that lists all the available games online and allows to join
 * Create a button to host a new game
