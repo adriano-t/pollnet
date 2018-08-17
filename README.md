@@ -6,6 +6,7 @@ Pollnet is designed to create lobbies/chats, or turn based games and it's not su
 
 - [Installation](#installation) 
 - [Usage](#usage)
+- [License (MIT)](#license)
 
 	
 ## Installation
