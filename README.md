@@ -1,4 +1,4 @@
-PollNet
+PollNet v0.1
 =====================
 Http multiplayer game library for GMStudio2
 
