@@ -5,4 +5,4 @@ global.pn_website = "http://tizsoft.altervista.org/pollnet/";
 global.pn_game_token = "chatapp";
 
 // check interval in seconds
-receive_interval = 2;
+receive_interval = 1;

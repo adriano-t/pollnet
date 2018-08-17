@@ -73,14 +73,14 @@ switch(message_id)
 		if(message == global.pn_player_id) 
 			room_goto(room_lose); 
 		else
-			show_message(global.pn_players_map[? message] + " tried a solution and lose");
+			show_message_async(global.pn_players_map[? message] + " tried a solution and lose");
 		break;
 		
 	case "solution": 
 		if(string_upper(message) == global.sentence)
 		{
 			pn_send("win", all, sender_id);
-			global.winner = global.pn_players_map[? message];
+			global.winner = global.pn_players_map[? sender_id];
 			room_goto(room_win);
 		}
 		else 

@@ -23,7 +23,7 @@ echo("games table created<br/>");
 
 $query = "CREATE TABLE ".$prefix."_users(
     id BIGINT UNSIGNED  AUTO_INCREMENT PRIMARY KEY,
-	ip BINARY(16) NOT NULL,
+	ip INT UNSIGNED NOT NULL,
     token CHAR(20) NOT NULL ,
     name VARCHAR(50) NOT NULL,
     admin BOOLEAN NOT NULL,

@@ -27,12 +27,12 @@ if ($row = mysql_fetch_assoc($result))
 
     
     //get players list
-    $query = "SELECT id, ip, name FROM ".$prefix."_users WHERE game = '$game' AND token != '$token'";
+    $query = "SELECT id, INET_NTOA(ip) AS ip, name FROM ".$prefix."_users WHERE game = '$game' AND token != '$token'";
     $result = mysql_query($query) or die(mysql_error());
 
     while ($row = mysql_fetch_assoc($result)) 
     { 
-        echo $row["id"] . $word_sep  . inet_ntop($row["ip"]) . $word_sep . $row["name"] . $word_sep . $line_sep;
+        echo $row["id"] . $word_sep  . $row["ip"] . $word_sep . $row["name"] . $word_sep . $line_sep;
     } 
 
     

@@ -15,7 +15,7 @@ if($mode == "host")
     $gametoken = mysql_real_escape_string($_POST["gametoken"]);
     $username = mysql_real_escape_string($_POST["username"]);
     $maxplayers = mysql_real_escape_string($_POST["maxplayers"]);
-	$ip = mysql_real_escape_string(inet_pton(getUserIP()));
+	$ip = mysql_real_escape_string(getUserIP());
     $token = randomString(20);
     
     $query = "INSERT INTO ".$prefix."_games(name, gametoken, maxplayers) 
@@ -25,7 +25,7 @@ if($mode == "host")
     $gameid = mysql_insert_id();
 
     $query = "INSERT INTO ".$prefix."_users(ip, token, name, game, admin) 
-    VALUES('$ip', '$token', '$username', '$gameid', TRUE)";
+    VALUES(INET_ATON('$ip'), '$token', '$username', '$gameid', TRUE)";
     mysql_query($query) or die(mysql_error());
 
     echo($token . $word_sep . mysql_insert_id());
@@ -87,21 +87,21 @@ elseif ($mode == "join")
     if($count < $max)
     {
 		// insert the new player
-		$ip = mysql_real_escape_string(inet_pton(getUserIP()));
+		$ip = mysql_real_escape_string(getUserIP());
         $query = "INSERT INTO ".$prefix."_users(ip, token, name, game, admin) 
-        VALUES('$ip', '$token', '$username', '$gameid', FALSE)";
+        VALUES(INET_ATON('$ip'), '$token', '$username', '$gameid', FALSE)";
         mysql_query($query) or die(mysql_error());
 		$player_id = mysql_insert_id();
 		
 		//get admin ip
-		$query = "SELECT ip
+		$query = "SELECT INET_NTOA(ip)
         FROM ".$prefix."_users 
         WHERE admin = TRUE AND game = '$gameid';";
 		$result = mysql_query($query) or die(mysql_error());
 
 		$admin_ip = "127.0.0.1";
 		if(mysql_num_rows($result) != 0) 
-			$admin_ip = inet_ntop(mysql_result($result, 0, 0));
+			$admin_ip = mysql_result($result, 0, 0);
 		
 		
         echo($token . $word_sep . $player_id . $word_sep . $admin_ip);
