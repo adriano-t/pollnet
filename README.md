@@ -1,5 +1,5 @@
 # PollNet v0.1
-Http multiplayer game library for GMStudio2.
+Http multiplayer game library for GameMaker Studio 2.
 Pollnet is designed to create lobbies/chats, or turn based games and it's not suitable for realtime games.
 
 ## Table of contents
