@@ -45,7 +45,7 @@ if ($row = mysql_fetch_assoc($result))
     FROM ".$prefix."_messages 
     WHERE user_from <> '$id'
         AND game = '$game' 
-        AND (user_to = '$id' OR user_to is NULL)
+        AND (user_to = '$id' OR user_to = 0)
         AND date > '$date'
     ORDER BY date ASC";
     $result = mysql_query($query) or die(mysql_error());
