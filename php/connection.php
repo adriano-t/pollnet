@@ -35,10 +35,14 @@ if(time() - $number > $update_interval)
 { 
     file_put_contents($prefix."_update.txt", time()); 
 
-    //delete players and messages
+    //delete players
     $query = "DELETE FROM ".$prefix."_users WHERE date < NOW() - INTERVAL 10 SECOND"; 
     mysql_query($query) or die(mysql_error());
  
+    //delete messages
+    $query = "DELETE FROM ".$prefix."_messages WHERE date < NOW() - INTERVAL 10 SECOND"; 
+    mysql_query($query) or die(mysql_error());
+
     //delete empty games
     $query = "DELETE FROM ".$prefix."_games
     WHERE id NOT IN (
