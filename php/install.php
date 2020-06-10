@@ -22,7 +22,7 @@ mysql_query($query) or die(mysql_error());
 echo("games table created<br/>");
 
 $query = "CREATE TABLE ".$prefix."_users(
-    id BIGINT UNSIGNED  AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	ip INT UNSIGNED NOT NULL,
     token CHAR(20) NOT NULL ,
     name VARCHAR(50) NOT NULL,

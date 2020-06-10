@@ -1,6 +1,6 @@
 <?php
 
-if(!isset($_POST["token"]) || ! isset($_POST["date"]))
+if(!isset($_POST["token"]) || ! isset($_POST["lastid"]))
 {
     echo("Error: missing token or date");
     exit;
@@ -8,9 +8,8 @@ if(!isset($_POST["token"]) || ! isset($_POST["date"]))
 require_once "config.php";
 require_once "connection.php";
 
-
 $token = mysql_real_escape_string($_POST["token"]);
-$date = mysql_real_escape_string($_POST["date"]);
+$lastid = mysql_real_escape_string($_POST["lastid"]);
 
 $query = "SELECT id, game FROM ".$prefix."_users WHERE token = '$token'";
 $result = mysql_query($query) or die(mysql_error());
@@ -25,7 +24,6 @@ if ($row = mysql_fetch_assoc($result))
     $query = "UPDATE ".$prefix."_users SET date = NOW() WHERE token = '$token'";
     $result = mysql_query($query) or die(mysql_error());
 
-    
     //get players list
     $query = "SELECT id, INET_NTOA(ip) AS ip, name FROM ".$prefix."_users WHERE game = '$game' AND token != '$token'";
     $result = mysql_query($query) or die(mysql_error());
@@ -33,26 +31,24 @@ if ($row = mysql_fetch_assoc($result))
     while ($row = mysql_fetch_assoc($result)) 
     { 
         echo $row["id"] . $word_sep  . $row["ip"] . $word_sep . $row["name"] . $word_sep . $line_sep;
-    } 
+    }
 
-    
-    
     echo($msg_sep);
           
     
     //get messages list
-    $query = "SELECT date, user_from, user_to, message
+    $query = "SELECT id, date, user_from, user_to, message
     FROM ".$prefix."_messages 
     WHERE user_from <> '$id'
         AND game = '$game' 
         AND (user_to = '$id' OR user_to = 0)
-        AND date > '$date'
-    ORDER BY date ASC";
+        AND id > '$lastid'
+    ORDER BY id ASC";
     $result = mysql_query($query) or die(mysql_error());
  
     while ($row = mysql_fetch_assoc($result)) 
     {
-        echo $row["date"] . $word_sep . $row["user_from"] . $word_sep . $row["user_to"] . $word_sep . $row["message"] . $word_sep . $line_sep;
+        echo $row["id"] . $word_sep . $row["date"] . $word_sep . $row["user_from"] . $word_sep . $row["user_to"] . $word_sep . $row["message"] . $word_sep . $line_sep;
     }
 
 }
