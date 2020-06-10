@@ -45,7 +45,7 @@ $query = "CREATE TABLE ".$prefix."_messages(
     CONSTRAINT game_fk
         FOREIGN KEY (game) REFERENCES ".$prefix."_games(id),
     CONSTRAINT user_from_fk
-        FOREIGN KEY (user_from) REFERENCES ".$prefix."_users(id),
+        FOREIGN KEY (user_from) REFERENCES ".$prefix."_users(id) ON DELETE CASCADE,
     CONSTRAINT user_to_fk
         FOREIGN KEY (user_to) REFERENCES ".$prefix."_users(id)
 );";
