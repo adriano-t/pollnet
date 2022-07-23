@@ -1,4 +1,4 @@
-# PollNet v0.1
+# PollNet v0.4
 Http multiplayer game library for GameMaker Studio 2.
 Pollnet is designed to create lobbies/chats, or turn based games and it's not suitable for realtime games.
 
@@ -34,8 +34,8 @@ $update_interval = 2; //update interval in seconds
 * Drag and drop the extension file (`pollnet_extension.yymp`) into GMStudio2
 
 ### 3b) Or open an example project
-`./chatexample/` directory
-`./hangman/` directory
+`./examples/chat/` directory
+`./examples/hangman/` directory
 
 
 ### 4) GMStudio2 Configuration
@@ -61,8 +61,8 @@ All the scripts under `events` group are called when something happens
 
 For example:
 
-* `pn_on_host` is called when `pn_host` has success and you created a new lobby.
-* `pn_on_join` is called when `pn_join` has success and you joined the lobby.
+* `pn_on_player_join` is called when a player (included yourself) joins the lobby.
+* `pn_on_player_quit` is called when a player (included yourself) leaves the lobby.
 
 ### Global Variables
 * `global.pn_last_date`: last message date 
@@ -85,7 +85,7 @@ For example:
 
 MIT LICENSE
 	
-Copyright 2018 Adriano Tumminelli
+Copyright 2022 Adriano Tumminelli
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
