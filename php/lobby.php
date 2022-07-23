@@ -1,5 +1,5 @@
 <?php
-
+require_once "header.php";
 require_once "config.php";
 require_once "connection.php";
 
@@ -40,7 +40,7 @@ elseif ($mode == "manage")
     $token = mysql_real_escape_string($_POST["token"]); 
 
     //verify user
-    $query = "SELECT id, game FROM ".$prefix."_users WHERE token = '$token'";
+    $query = "SELECT id, game FROM ".$prefix."_users WHERE token = '$token' and admin = TRUE";
     $result = mysql_query($query) or die(mysql_error());
     
     //only take the first result

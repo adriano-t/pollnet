@@ -1,10 +1,15 @@
 <?php
 
+require_once "header.php";
+
+if(!isset($_POST["token"]) || !isset($_POST["message"]))
+{
+    exit("ERR_MISSING_PARAMETERS");
+}
+
 require_once "config.php";
 require_once "connection.php";
 
-if(!isset($_POST["token"]) || !isset($_POST["message"]))
-    exit;
 $token = mysql_real_escape_string($_POST["token"]); 
 $message = mysql_real_escape_string($_POST["message"]); 
 $to = mysql_real_escape_string($_POST["to"]);
@@ -35,5 +40,7 @@ if ($row = mysql_fetch_assoc($result))
     mysql_query($query) or die(mysql_error());
     
     echo (mysql_insert_id());
+} else {
+    echo "ERR_MISSING_GAME";
 }
 ?>
