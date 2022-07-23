@@ -70,6 +70,7 @@ For example:
 * `global.pn_players_list`: ds_list of players id
 * `global.pn_games_list`: ds_list of games
 * `global.pn_admin_id`: player id of the host
+* `global.pn_player_id`: your id in the lobby
 
 
 ### Tips
