@@ -8,18 +8,19 @@ if (status == 1)
 	
 var r_str = ds_map_find_value(async_load, "result");
 
+
+
 #region process messages
-if (aid == global.pn_request_message)
+if (aid == global.pn_request_messages)
 {
 	if(status < 0)
 	{
-		pn_on_error(pn_error.empty_message_result, "empty message request result"); 
+		pn_reject(global.pn_callback_message, pn_error.empty_result, "empty message request result"); 
 		exit;
 	}
 	
-	if(r_str == "ERR_MISSING_GAME") {
-		pn_on_player_quit(global.pn_player_id, "");
-		reset();
+	if(r_str == "ERROR_LOBBY_DESTROYED") {
+		pn_reject(global.pn_callback_message, pn_error.lobby_destroyed, "The game does not exists anymore");
 		exit;
 	}
 	
@@ -35,9 +36,8 @@ if (aid == global.pn_request_message)
 	{  
 		var p_data = pn_string_split(lines[i], sep_word);
 		var player_id = real(p_data[0]);
-		var player_ip = p_data[1];
-		var player_name = p_data[2];
-		var is_admin = p_data[3] == "1";
+		var player_name = p_data[1];
+		var is_admin = p_data[2] == "1";
 		if(is_admin) {
 			global.pn_admin_id = player_id;
 		}
@@ -48,7 +48,15 @@ if (aid == global.pn_request_message)
 		{
 			ds_map_add(global.pn_players_map, player_id, player_name);
 			ds_list_add(global.pn_players_list, player_id);
-			pn_on_player_join(player_id, player_name, player_ip);
+			
+			//don't trigger the event for myself
+			if(player_id != global.pn_player_id) 
+			{
+				pn_resolve(pn_events[pn_event.player_join], {
+					player_id: player_id, 
+					player_name: player_name
+				});
+			}
 		}
 	}
 	 
@@ -59,11 +67,21 @@ if (aid == global.pn_request_message)
 		var p = global.pn_players_list[| i];
 		if(!ds_map_exists(global.pn_players_checkmap, p))
 		{
-			pn_on_player_quit(p, global.pn_players_map[? p]);
-			if(p == global.pn_player_id) {
+			//if i quit, leave the lobby
+			if(p == global.pn_player_id)
+			{
+				pn_resolve(global.pn_callback_quit);
 				reset();
 				exit;
+			} 
+			else
+			{
+				pn_resolve(pn_events[pn_event.player_quit], {
+					player_id: p, 
+					player_name: global.pn_players_map[? p]
+				});
 			}
+			
 			ds_list_delete(global.pn_players_list, i--);
 			ds_map_delete(global.pn_players_map, p);
 		}
@@ -81,20 +99,23 @@ if (aid == global.pn_request_message)
 		var m_data = pn_string_split(lines[i], sep_word);
 		
 		if(array_length(m_data) != 5) {
-			pn_on_error(pn_error.wrong_message_format, "decode: wrong message format"); 
+			pn_reject(pn_events[pn_event.receive_message], pn_error.wrong_message_format, "decode: wrong message format");
 			continue;
 		}
 		
-		global.pn_last_id = m_data[0];
+		global.pn_last_id = real(m_data[0]);
 		global.pn_last_date = m_data[1];
 		var from = real(m_data[2]);
 		var to = real(m_data[3]);
 		var packet = m_data[4];
 		
 		//server message
-		if(packet == "pollnet_game_started")
+		if(from == pn_server_message_id)
 		{
-			pn_on_game_start();	
+			if(packet == "pollnet_game_started") 
+			{
+				pn_resolve(pn_events[pn_event.game_start]);
+			}
 		}
 		//game message, decode it
 		else
@@ -106,8 +127,7 @@ if (aid == global.pn_request_message)
 			  
 			switch(type)
 			{
-				case 0: 
-				
+				case 0: //TYPE ARRAY				
 					//show_debug_message("TYPE ARRAY");
 					
 					var len = real(gm_data[2]); 
@@ -121,11 +141,13 @@ if (aid == global.pn_request_message)
 						
 						if(sub_type == "0"){
 							val = string(gm_data[3 + j]); 
-						}else if(sub_type == "1") {
+						}
+						else if(sub_type == "1") {
 							val = real(gm_data[3 + j]); 
-						}else
+						}
+						else
 						{ 
-							pn_on_error(pn_error.unkown_element_type, "decode: unknown array element type");
+							pn_reject(pn_events[pn_event.receive_message], pn_error.unkown_element_type, "decode: unknown array element type");
 							exit;
 						}
 					
@@ -134,30 +156,37 @@ if (aid == global.pn_request_message)
 					
 					break;
 			
-				case 1:
+				case 1: // TYPE STRING
 					//show_debug_message("TYPE STRING");
 					message = gm_data[2];
 					break;
 			
-				case 2:
+				case 2: // TYPE REAL
 					//show_debug_message("TYPE REAL");
 					message = real(gm_data[2]);
 					break;
 			
 				default:
-					pn_on_error(pn_error.unknown_packet_type, "decode: unknown packet type"); 
+					pn_reject(pn_events[pn_event.receive_message], pn_error.unknown_packet_type, "decode: unknown packet type");
 					exit;
 					break;
 			}
-			
-			pn_on_receive(global.pn_last_date, from, to, msg_id, message);
+					 
+			pn_resolve(pn_events[pn_event.receive_message], {
+				last_date: global.pn_last_date,
+				from: from,
+				to: to,
+				message_id: msg_id,
+				message: message,
+			});
 		}
 	
 	}
 	#endregion
 	
     alarm[0] = receive_interval * game_get_speed(gamespeed_fps);
-} 
+	exit;
+}
 #endregion
   
 #region join
@@ -166,16 +195,29 @@ if (aid == global.pn_request_join)
 	
 	if(status < 0)
 	{
-		pn_on_error(pn_error.empty_join_result, "empty join result, check php installation");  
+		pn_reject(global.pn_callback_join, pn_error.empty_result, "empty join result, check php installation");  
+		exit;
+	}
+	
+	if(r_str == "ERROR_LOBBY_FULL") {
+		pn_reject(global.pn_callback_join, pn_error.lobby_full, "the lobby is full");
+		exit;
+	}
+	
+	if(r_str == "ERROR_GAME_STARTED") {
+		pn_reject(global.pn_callback_join, pn_error.lobby_destroyed, "The game does not exits");
+		exit;
+	}
+	
+	if(r_str == "ERROR_GAME_STARTED") {
+		pn_reject(global.pn_callback_join, pn_error.game_started, "The game already started");
 		exit;
 	}
 	
 	var data = pn_string_split(r_str, sep_word);
 	var token = data[0];
 	var player_id = real(data[1]);
-	var admin_ip = data[2];
 	 
-	  
 	if(string_length(token) == token_size)
 	{
 		global.pn_token = token;
@@ -184,9 +226,17 @@ if (aid == global.pn_request_join)
 		global.pn_last_date = string(current_year) + "-" + string(current_month) + "-" + string(current_day) + " " +
 		string(current_hour) + "-" + string(current_minute) + "-" + string(current_second);
 		global.pn_player_id = real(player_id);
-		pn_on_player_join(global.pn_player_id, "", "");
+		pn_resolve(global.pn_callback_join, {
+			player_id: global.pn_player_id, 
+			player_name: global.pn_player_name
+		});
 		alarm[0] = 1;
+	} 
+	else
+	{
+		pn_reject(global.pn_callback_join, pn_error.invalid_token, "Invalid token on join");	
 	}
+	exit;
 } 
 #endregion
  
@@ -195,9 +245,10 @@ if (aid == global.pn_request_host)
 {
 	if(status < 0)
 	{ 
-		pn_on_error(pn_error.empty_host_result, "empty host result, check php installation"); 
+		pn_reject(global.pn_callback_host, pn_error.empty_result, "empty host result, check php installation"); 
 		exit;
 	} 
+	
 	var data = pn_string_split(r_str, sep_word);
 	var token = data[0];
 	var player_id = data[1]; 
@@ -214,10 +265,17 @@ if (aid == global.pn_request_host)
 		global.pn_player_id = real(player_id);
 		global.pn_admin_id = global.pn_player_id;
 		
-		pn_on_player_join(global.pn_player_id, "", "");
+		pn_resolve(global.pn_callback_host, {
+			player_id: global.pn_player_id,
+			player_name: global.pn_player_name
+		});
 		alarm[0] = 1;
 	}
-	
+	else
+	{
+		pn_reject(global.pn_callback_host, pn_error.invalid_token, "Invalid token on join");	
+	}
+	exit;
 }
 #endregion
 
@@ -227,9 +285,11 @@ if (aid == global.pn_request_game_start)
 {
 	if(status < 0)
 	{
-		pn_on_error(pn_error.empty_start_request_result, "empty start request result, check php installation"); 
+		pn_reject(global.pn_callback_game_start, pn_error.empty_result, "empty start request result, check php installation"); 
 		exit;
 	}
+	pn_resolve(global.pn_callback_game_start);
+	exit;
 }
 
 #endregion
@@ -239,13 +299,12 @@ if (aid == global.pn_request_quit)
 {
 	if(status < 0)
 	{ 
-		pn_on_error(pn_error.empty_quit_result, "empty quit request result, check php installation"); 
+		pn_reject(global.pn_callback_quit, pn_error.empty_result, "empty quit request result, check php installation"); 
 		exit;
 	}
-	
-	pn_on_player_quit(global.pn_player_id, "");
-	 
+	pn_resolve(global.pn_callback_quit);
 	reset();
+	exit;
 }
 #endregion
 
@@ -253,35 +312,34 @@ if (aid == global.pn_request_quit)
 for(var i = 0; i < ds_list_size(global.pn_request_send_list); i++)
 {
 	var msg = global.pn_request_send_list[| i]
-	if (aid == msg[| 0])
+	if (aid == msg.request_id)
 	{ 
 		if(status < 0)
 		{ 
-			pn_on_error(pn_error.empty_send_request_result, "empty send request result, check php installation");
+			pn_reject(msg.callback, pn_error.empty_result, "empty send request result, check php installation");
 			exit;
 		}
-	
-		if(string_length(r_str) > 0) 
-			pn_on_send(msg[| 1], msg[| 2], msg[| 3]); 
-		else
-			pn_on_error(pn_error.cant_send, "error, can't send message: " + string(aid));
-		ds_list_destroy(msg);
-		ds_list_delete(global.pn_request_send_list, i--);
+
+		if(r_str == "ERROR_LOBBY_DESTROYED") {
+			pn_reject(msg.callback, pn_error.lobby_destroyed, "The game does not exists");
+			exit;
+		}
+		
+		pn_resolve(msg.callback);
+		exit;
 	}
 }
 #endregion
 
 #region games
-if (aid == global.pn_request_games)
+if (aid == global.pn_request_lobbies)
 {
 	//free games list
-	for(var i = 0; i < ds_list_size(global.pn_games_list); i++) 
-		ds_list_destroy(global.pn_games_list[| i]); 
 	ds_list_clear(global.pn_games_list); 
 	
 	if(status < 0)
 	{ 
-		pn_on_error(pn_error.empty_games_list_result, "empty games list result, check php installation");
+		pn_reject(global.pn_callback_lobbies, pn_error.empty_result, "empty games list result, check php installation");
 		exit;
 	}
 	
@@ -293,26 +351,18 @@ if (aid == global.pn_request_games)
 			var game = ds_list_create();
 			var g_data = pn_string_split(lines[i], sep_word);
 			
-			var gameid = real(g_data[0]);
-			ds_list_add(game, gameid); 
-		
-			var admin_id = real(g_data[1]);
-			ds_list_add(game, admin_id); 
-		
-			var game_name = g_data[2];
-			ds_list_add(game, game_name); 
-		
-			var online_players = real(g_data[3]);
-			ds_list_add(game, online_players); 
-		
-			var max_players = real(g_data[4]);
-			ds_list_add(game, max_players); 
-		
-			ds_list_add(global.pn_games_list, game);
+			ds_list_add(global.pn_games_list, {
+				game_id: real(g_data[0]),
+				admin_id: real(g_data[1]),
+				game_name: g_data[2],
+				online_players: real(g_data[3]),
+				max_players: real(g_data[4])
+			});
 		}
 	}
 	
-	pn_on_games_list(global.pn_games_list);
+	pn_resolve(global.pn_callback_lobbies, global.pn_games_list);
+	exit;
 }
 #endregion
 

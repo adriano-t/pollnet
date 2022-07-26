@@ -17,7 +17,7 @@ if (aid == global.pn_request_message)
 		exit;
 	}
 	
-	if(r_str == "ERR_MISSING_GAME") {
+	if(r_str == "ERROR_MISSING_GAME") {
 		pn_on_player_quit(global.pn_player_id, "");
 		reset();
 		exit;

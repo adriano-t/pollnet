@@ -9,7 +9,7 @@ if($mode == "host")
 {
     //create lobby
     if(!isset($_POST["gamename"]) || !isset($_POST["gametoken"]) || !isset($_POST["username"]) || !isset($_POST["maxplayers"]) || $_POST["maxplayers"] < 1)
-        exit;
+        exit("ERROR_MISSING_PARAMETERS");
 
     $gamename = mysql_real_escape_string($_POST["gamename"]);
     $gametoken = mysql_real_escape_string($_POST["gametoken"]);
@@ -28,13 +28,13 @@ if($mode == "host")
     VALUES(INET_ATON('$ip'), '$token', '$username', '$gameid', TRUE)";
     mysql_query($query) or die(mysql_error());
 
-    echo($token . $word_sep . mysql_insert_id());
+    exit($token . $word_sep . mysql_insert_id());
 } 
 elseif ($mode == "manage")
 {
     //manage players
     if(!isset($_POST["token"])  || !isset($_POST["started"]))
-        exit;
+        exit("ERROR_MISSING_PARAMETERS");
  
     $started = mysql_real_escape_string($_POST["started"]);
     $token = mysql_real_escape_string($_POST["token"]); 
@@ -52,21 +52,25 @@ elseif ($mode == "manage")
         //send start message to all the players
         $message = "pollnet_game_started";
         $query = "INSERT INTO ".$prefix."_messages(message, user_from, game)
-        VALUES('$message', '$id', '$game')"; 
+        VALUES('$message', '999999999', '$game')"; 
         mysql_query($query) or die(mysql_error());
 
         //block new joins
         $query = "UPDATE ".$prefix."_games SET started = '$started' WHERE id = '$game'";
         mysql_query($query) or die(mysql_error());
- 
-        echo("0");
+        
+        exit("0");
+    } 
+    else 
+    {
+        exit("ERROR_LOBBY_DESTROYED");
     }
 }
 elseif ($mode == "join")
 {
     //join lobby
     if(!isset($_POST["gameid"])  || !isset($_POST["username"]))
-        exit;
+        exit("ERROR_MISSING_PARAMETERS");
 
     $gameid = mysql_real_escape_string($_POST["gameid"]);
     $username = mysql_real_escape_string($_POST["username"]);
@@ -76,14 +80,25 @@ elseif ($mode == "join")
     $count = mysql_result($result, 0);
 
     //check max amount of players reached
-    $query = "SELECT maxplayers, usr.num
+    $query = "SELECT maxplayers, started, usr.num
     FROM ".$prefix."_games 
     JOIN (SELECT count(*) AS num FROM ".$prefix."_users WHERE game = '$gameid') AS usr
     WHERE id = '$gameid'";
 
     $result = mysql_query($query) or die(mysql_error());
+
+    if(mysql_num_rows($result) <= 0) 
+    {
+        exit("ERROR_LOBBY_DESTROYED");
+    }
+
     $max = mysql_result($result, 0, 0);
-    $count = mysql_result($result, 0, 1);
+    $started = mysql_result($result, 0, 1);
+    $count = mysql_result($result, 0, 2);
+
+    if($started) 
+        exit("ERROR_GAME_STARTED");
+
     if($count < $max)
     {
 		// insert the new player
@@ -93,37 +108,30 @@ elseif ($mode == "join")
         mysql_query($query) or die(mysql_error());
 		$player_id = mysql_insert_id();
 		
-		//get admin ip
-		$query = "SELECT INET_NTOA(ip)
-        FROM ".$prefix."_users 
-        WHERE admin = TRUE AND game = '$gameid';";
-		$result = mysql_query($query) or die(mysql_error());
-
-		$admin_ip = "127.0.0.1";
-		if(mysql_num_rows($result) != 0) 
-			$admin_ip = mysql_result($result, 0, 0);
-		
-		
-        echo($token . $word_sep . $player_id . $word_sep . $admin_ip);
+        exit($token . $word_sep . $player_id);
+    } 
+    else
+    {
+        exit("ERROR_LOBBY_FULL");
     }
 }
 elseif ($mode == "quit")
 {
     //join lobby
     if(!isset($_POST["token"]))
-        exit;
+        exit("ERROR_MISSING_PARAMETERS");
 
     $token = mysql_real_escape_string($_POST["token"]);
     $query = " DELETE FROM ".$prefix."_users WHERE token = '$token'";
     $result = mysql_query($query) or die(mysql_error());
-    echo("0");
+    exit("0");
 }
 elseif ($mode == "gameslist")
 {
     // show games list  
 
     if(!isset($_POST["gametoken"]))
-        exit;
+        exit("ERROR_MISSING_PARAMETERS");
     $gametoken = mysql_real_escape_string($_POST["gametoken"]);
 
     $query = "SELECT pg.id, adm.id as admin, name, num, maxplayers
@@ -145,7 +153,7 @@ elseif ($mode == "gameslist")
     $result = mysql_query($query) or die(mysql_error());
 
     if(mysql_num_rows($result) == 0) 
-        echo("0");
+        exit("0");
         
     while ($row = mysql_fetch_assoc($result)) 
     {

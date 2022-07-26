@@ -4,7 +4,7 @@ require_once "header.php";
 
 if(!isset($_POST["token"]) || !isset($_POST["message"]))
 {
-    exit("ERR_MISSING_PARAMETERS");
+    exit("ERROR_MISSING_PARAMETERS");
 }
 
 require_once "config.php";
@@ -39,8 +39,10 @@ if ($row = mysql_fetch_assoc($result))
 
     mysql_query($query) or die(mysql_error());
     
-    echo (mysql_insert_id());
-} else {
-    echo "ERR_MISSING_GAME";
+    exit(mysql_insert_id());
+} 
+else 
+{
+    exit("ERROR_LOBBY_DESTROYED");
 }
 ?>

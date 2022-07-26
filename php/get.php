@@ -4,7 +4,7 @@ require_once "header.php";
 
 if(!isset($_POST["token"]) || !isset($_POST["lastid"]))
 {
-    exit("ERR_MISSING_PARAMETERS");
+    exit("ERROR_MISSING_PARAMETERS");
 }
 
 require_once "config.php";
@@ -27,22 +27,21 @@ if ($row = mysql_fetch_assoc($result))
     $result = mysql_query($query) or die(mysql_error());
 
     //get players list
-    $query = "SELECT id, INET_NTOA(ip) AS ip, name, admin FROM ".$prefix."_users WHERE game = '$game'";
+    $query = "SELECT id, name, admin FROM ".$prefix."_users WHERE game = '$game'";
     $result = mysql_query($query) or die(mysql_error());
 
     while ($row = mysql_fetch_assoc($result)) 
     { 
-        echo $row["id"] . $word_sep  . $row["ip"] . $word_sep . $row["name"] . $word_sep . $row["admin"] . $word_sep . $line_sep;
+        echo $row["id"] . $word_sep . $row["name"] . $word_sep . $row["admin"] . $word_sep . $line_sep;
     }
 
-    echo($msg_sep);
-          
+    echo($msg_sep);          
     
     //get messages list
     $query = "SELECT id, date, user_from, user_to, message
     FROM ".$prefix."_messages 
-    WHERE
-        game = '$game' 
+    WHERE user_from <> '$id'
+        AND game = '$game'  
         AND (user_to = '$id' OR user_to = 0)
         AND id > '$lastid'
     ORDER BY id ASC";
@@ -52,7 +51,9 @@ if ($row = mysql_fetch_assoc($result))
     {
         echo $row["id"] . $word_sep . $row["date"] . $word_sep . $row["user_from"] . $word_sep . $row["user_to"] . $word_sep . $row["message"] . $word_sep . $line_sep;
     }
-} else {
-    echo "ERR_MISSING_GAME";
+} 
+else
+{
+    exit("ERROR_LOBBY_DESTROYED");
 }
 ?>

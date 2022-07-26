@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "events",
-    "path": "folders/pollnet/scripts/events.yy",
+    "name": "functions",
+    "path": "folders/pollnet/scripts/functions.yy",
   },
   "resourceVersion": "1.0",
-  "name": "pn_on_receive",
+  "name": "pn_get_lobbies",
   "tags": [],
   "resourceType": "GMScript",
 }
