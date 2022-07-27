@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "core",
-    "path": "folders/pollnet/scripts/core.yy",
+    "name": "scripts",
+    "path": "folders/pollnet/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "pn_core",
+  "name": "pn_join_auto",
   "tags": [],
   "resourceType": "GMScript",
 }

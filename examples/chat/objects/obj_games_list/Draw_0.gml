@@ -1,8 +1,8 @@
 draw_text(10, 10, "Games List");
 
-for(var i = 0; i < ds_list_size(global.pn_games_list); i++)
+for(var i = 0; i < ds_list_size(obj_pollnet.games_list); i++)
 {
-	var game = global.pn_games_list[| i]; 
+	var game = obj_pollnet.games_list[| i]; 
 	
 	var s = game.game_name + ": " + string(game.online_players) + "/" + string(game.max_players);
 	draw_text(50, 30 + 24 * i, s);

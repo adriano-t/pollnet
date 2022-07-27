@@ -2,8 +2,8 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "functions",
-    "path": "folders/pollnet/scripts/functions.yy",
+    "name": "scripts",
+    "path": "folders/pollnet/scripts.yy",
   },
   "resourceVersion": "1.0",
   "name": "pn_quit",

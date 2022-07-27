@@ -6,7 +6,7 @@
     "path": "folders/pollnet/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "pn_documentation",
+  "name": "pn_on_message",
   "tags": [],
   "resourceType": "GMScript",
 }

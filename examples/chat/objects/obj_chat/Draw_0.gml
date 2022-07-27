@@ -5,12 +5,12 @@ draw_set_color(c_ltgray);
 draw_rectangle(0, 0, 120, room_height -1, 0);
 
 //other players name
-for(var i = 0; i < ds_list_size(global.pn_players_list); i++)
+for(var i = 0; i < ds_list_size(obj_pollnet.players_list); i++)
 {
-	var player_id = global.pn_players_list[| i];
-	var player_name = global.pn_players_map[? player_id];
+	var player_id = obj_pollnet.players_list[| i];
+	var player_name = obj_pollnet.players_map[? player_id];
 	
-	if(player_id == global.pn_player_id)
+	if(player_id == obj_pollnet.player_id)
 		draw_set_color(c_blue);
 	else
 		draw_set_color(c_black);
@@ -29,15 +29,17 @@ draw_text(6, room_height - 25, keyboard_string + caret);
 
 if(keyboard_check_pressed(vk_enter))
 {
-	if(keyboard_string != "")
+	if(keyboard_string != "") {
 		pn_send("chat", all, keyboard_string, function(resp) {
 			if(resp.success) {
-				ds_list_add(obj_chat.messages, resp.data.message);
+				var s = "[" + string(obj_pollnet.last_date) + "] <" + string( obj_pollnet.player_name) + "> " + keyboard_string;
+				ds_list_add(obj_chat.messages, s);
 			} else {
 				show_debug_message(resp.error);	
 			}
+			keyboard_string = "";
 		});
-	keyboard_string = "";
+	}
 }
  
 //draw last 28 messages

@@ -17,38 +17,38 @@ function pn_send(message_id, to, message, callback = undefined) {
 			var val = message[i];
 		
 			if(is_string(val)) 
-				packet += "1" + obj_pollnet.sep_packet + val + obj_pollnet.sep_packet ;
+				packet += "1" + obj_pollnet.sep_packet + base64_encode(val) + obj_pollnet.sep_packet ;
 		
 			else if(is_real(val)) 
-				packet += "2" + obj_pollnet.sep_packet + string(val) + obj_pollnet.sep_packet; 
+				packet += "2" + obj_pollnet.sep_packet + string_format(val, 0, 10) + obj_pollnet.sep_packet; 
 			
 			else
 			{
-				pn_reject(callback, pn_error.unkown_element_type, "encode: unknown array element type");
+				obj_pollnet.reject(callback, pn_error.unkown_element_type, "encode: unknown array element type");
 				return;
 			}
 		}
 	}
 
 	else if(is_string(message)) 
-		packet += "1" + obj_pollnet.sep_packet +  message; 
+		packet += "1" + obj_pollnet.sep_packet +  base64_encode(message); 
 	
 	else if(is_real(message)) 
-		packet += "2" + obj_pollnet.sep_packet + string(message); 
+		packet += "2" + obj_pollnet.sep_packet + string_format(message, 0, 10); 
 	else
 	{
-		pn_reject(callback, pn_error.unknown_packet_type, "encode: unknown array element type");
+		obj_pollnet.reject(callback, pn_error.unknown_packet_type, "encode: unknown array element type");
 		return;
 	}
 
-	var val = "token=" + global.pn_token;
+	var val = "token=" + obj_pollnet.token;
 	if(to > 0)
 		val += "&to=" + string(to);
 	val += "&message=" + packet; 
-	var msgid = pn_http_request(global.pn_url_post, val);
+	var req_id = obj_pollnet.pn_http_request(obj_pollnet.url_post, val);
  
-	ds_list_add(global.pn_request_send_list, {
-		request_id: msgid,
+	ds_list_add(obj_pollnet.request_send_list, {
+		request_id: req_id,
 		callback: callback,
 	}); 
 }
