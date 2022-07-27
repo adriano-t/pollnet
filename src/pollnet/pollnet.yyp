@@ -5,6 +5,7 @@
     {"id":{"name":"obj_test","path":"objects/obj_test/obj_test.yy",},"order":0,},
     {"id":{"name":"pn_quit","path":"scripts/pn_quit/pn_quit.yy",},"order":6,},
     {"id":{"name":"pn_host","path":"scripts/pn_host/pn_host.yy",},"order":3,},
+    {"id":{"name":"pn_on_message","path":"scripts/pn_on_message/pn_on_message.yy",},"order":9,},
     {"id":{"name":"pn_on","path":"scripts/pn_on/pn_on.yy",},"order":5,},
     {"id":{"name":"pn_join","path":"scripts/pn_join/pn_join.yy",},"order":4,},
     {"id":{"name":"pn_send","path":"scripts/pn_send/pn_send.yy",},"order":7,},

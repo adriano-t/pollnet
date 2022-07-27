@@ -1,6 +1,6 @@
 ///@param {Real} event
 ///@param {Function} callback
-function pn_on(event, callback){
+function pn_on_event(event, callback){
 	if(event < pn_event.COUNT && is_method(callback))
 		obj_pollnet.events_list[event] = callback;
 	else

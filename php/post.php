@@ -39,7 +39,7 @@ if ($row = mysql_fetch_assoc($result))
 
     mysql_query($query) or die(mysql_error());
     
-    exit(mysql_insert_id());
+    exit("0");
 } 
 else 
 {

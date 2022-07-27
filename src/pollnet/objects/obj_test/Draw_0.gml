@@ -20,12 +20,16 @@ for(var i = 0; i < array_length(names); i++) {
 	var name = names[i];
 	var status = variable_struct_get(tests, name);
 	var status_name = status_names[status];
+	
 	if(status_name == "passed")
 		draw_set_color(c_green);
 	else if(status_name == "failed")
 		draw_set_color(c_red);
+	else if(status_name == "running")
+		draw_set_color(c_aqua);
 	else
 		draw_set_color(c_white);
+		
 	draw_text_aligned(string(name) + ": " + string(status_name));
 	
 	draw_set_color(c_white);

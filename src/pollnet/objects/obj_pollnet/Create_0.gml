@@ -6,14 +6,11 @@ if(instance_number(object_index) > 1)
 	exit;
 }
 
-
-
 enum pn_event {
 	error,
 	game_start,
 	player_join,
 	player_quit,
-	receive_message,
 	disconnect,
 	COUNT
 }
@@ -30,14 +27,16 @@ enum pn_error {
 	game_started,
 	invalid_token,
 	lobby_not_found,
+	missing_message_handler,
 }
-
 
 self.request_send_list = ds_list_create();
 self.players_checkmap = ds_map_create();
 self.players_map = ds_map_create();
 self.players_list = ds_list_create();
 self.games_list = ds_list_create();
+self.message_events = ds_map_create();
+self.events_list = array_create(pn_event.COUNT);
 self.receive_interval = 2;
 
 self.init_variables = function() {
@@ -65,13 +64,11 @@ self.init_variables = function() {
 	self.callback_join = undefined;
 	self.callback_join_auto = undefined;
 	self.callback_quit = undefined;
-	self.events_list = array_create(pn_event.COUNT);
 }
 
 self.init_variables();
 
 self.reset = function() {
-	
 	self.alarm[0] = -1;
 	
 	ds_list_clear(self.request_send_list);
@@ -84,7 +81,6 @@ self.reset = function() {
 	
 	for(var i = 0; i < array_length(self.events_list); i++)
 		self.events_list[i] = undefined;
-		
 }
 
 /// @param {Function} callback
@@ -172,7 +168,6 @@ self.set_config = function(config){
 	ini_open(working_directory + "pollnet.ini");
 	var saved_token = ini_read_string("user", "token", "");
 	ini_close();
-	show_debug_message(["saved token", saved_token]);
 	if (string_length(saved_token) == self.token_size) 
 	{
 		self.clear_data(saved_token);
@@ -186,8 +181,6 @@ self.save_token = function() {
 }
 
 self.clear_data = function(saved_token) {
-	
-	show_debug_message("clearing previous data: " + string(saved_token));
 	var val = "mode=quit";
 	val += "&token=" + string(saved_token);
 	self.request_clear_data = obj_pollnet.pn_http_request(obj_pollnet.url_lobby, val);
@@ -197,9 +190,6 @@ self.clear_data = function(saved_token) {
 self.is_admin = function() {
 	return self.player_id == self.admin_id && self.admin_id != -1;
 }
-
-
-
 
 self.sep_word = chr(1);
 self.sep_mess = chr(2);

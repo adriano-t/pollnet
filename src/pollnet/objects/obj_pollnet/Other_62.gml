@@ -15,7 +15,7 @@ if (aid == self.request_messages)
 {
 	if(status < 0)
 	{
-		self.reject(events_list[pn_event.receive_message], pn_error.empty_result, "empty message request result"); 
+		self.reject(events_list[pn_event.error], pn_error.empty_result, "empty receive message result"); 
 		exit;
 	}
 	
@@ -97,10 +97,9 @@ if (aid == self.request_messages)
 	for(var i = 0; i < array_length(lines); i++)
 	{  
 		var m_data = self.string_split(lines[i], self.sep_word);
-		show_debug_message(m_data);
 		
 		if(array_length(m_data) != 5) {
-			self.reject(events_list[pn_event.receive_message], pn_error.wrong_message_format, "decode: wrong message format");
+			self.reject(events_list[pn_event.error], pn_error.wrong_message_format, "decode: wrong message format");
 			continue;
 		}
 		
@@ -125,61 +124,73 @@ if (aid == self.request_messages)
 			
 			var msg_id = gm_data[0];
 			var type = real(gm_data[1]); 
-			  
-			switch(type)
+			
+			var handlers = self.message_events[? msg_id];
+			if(handlers != undefined)
 			{
-				case 0: //TYPE ARRAY				
-					//show_debug_message("TYPE ARRAY");
+				switch(type)
+				{
+					case 0: //TYPE ARRAY			
+						//show_debug_message("TYPE ARRAY");
 					
-					var len = real(gm_data[2]); 
-					// fill array
-					var message = array_create(len);
-					var val;
-					for(var j = 0; j < len; j++)
-					{
-						var sub_type = gm_data[3 + j]; 
-						j++; 
-						
-						if(sub_type == "0"){
-							val = string(gm_data[3 + j]); 
-						}
-						else if(sub_type == "1") {
-							val = real(gm_data[3 + j]); 
-						}
-						else
-						{ 
-							self.reject(events_list[pn_event.receive_message], pn_error.unkown_element_type, "decode: unknown array element type");
-							exit;
+						var len = real(gm_data[2]); 
+						// fill array
+						var message = array_create(len);
+						var val;
+						var idx = 0;
+						for(var j = 0; j < len * 2; j++)
+						{
+							var sub_type = real(gm_data[3 + j]);
+							j++; 
+							
+							if(sub_type == 1){
+								val = base64_decode(gm_data[3 + j]); 
+							}
+							else if(sub_type == 2) {
+								val = real(gm_data[3 + j]); 
+							}
+							else
+							{
+								for(var k = 0; k < array_length(handlers); k++)
+									self.reject(handlers[k], pn_error.unkown_element_type, "decode: unknown array element type: " + string(sub_type));
+								exit;
+							}
+					
+							message[idx++] = val;
 						}
 					
-						message[j] = val;
-					}
-					
-					break;
+						break;
 			
-				case 1: // TYPE STRING
-					//show_debug_message("TYPE STRING");
-					message = gm_data[2];
-					break;
+					case 1: // TYPE STRING
+						//show_debug_message("TYPE STRING");
+						message = base64_decode(gm_data[2]);
+						break;
 			
-				case 2: // TYPE REAL
-					//show_debug_message("TYPE REAL");
-					message = real(gm_data[2]);
-					break;
+					case 2: // TYPE REAL
+						//show_debug_message("TYPE REAL");
+						message = real(gm_data[2]);
+						break;
 			
-				default:
-					self.reject(events_list[pn_event.receive_message], pn_error.unknown_packet_type, "decode: unknown packet type");
-					exit;
-					break;
-			}
+					default:
+						for(var j = 0; j < array_length(handlers); j++)
+							self.reject(handlers[j], pn_error.unknown_packet_type, "decode: unknown packet type");
+						exit;
+						break;
+				}
 					 
-			self.resolve(events_list[pn_event.receive_message], {
-				last_date: self.last_date,
-				from: from,
-				to: to,
-				message_id: msg_id,
-				message: message,
-			});
+				for(var j = 0; j < array_length(handlers); j++)
+					self.resolve(handlers[j], {
+						last_date: self.last_date,
+						from: from,
+						to: to,
+						message_id: msg_id,
+						message: message,
+					});
+			}
+			else
+			{
+				self.reject(events_list[pn_event.error], pn_error.missing_message_handler, "Missing message handler for " + string(msg_id));
+			}
 		}
 	
 	}
@@ -262,7 +273,6 @@ if (aid == self.request_join_auto)
 	}
 		
 	var data = self.string_split(r_str, self.sep_word);
-	show_debug_message(data);
 	var token = data[0];
 	var player_id = real(data[1]);	
     var game_name = data[2];
@@ -433,7 +443,6 @@ if (aid == self.request_clear_data)
 		exit;
 	}
 	
-	show_debug_message("clear data success " + string(r_str));
 	exit;
 }
 #endregion

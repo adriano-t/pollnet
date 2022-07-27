@@ -60,7 +60,7 @@ elseif ($mode == "manage")
         mysql_query($query) or die(mysql_error());
         
         exit("0");
-    } 
+    }
     else 
     {
         exit("ERROR_LOBBY_DESTROYED");

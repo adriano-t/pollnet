@@ -1,11 +1,13 @@
-/// @description alarm
+/// @description auto join
 
 
 pn_join_auto(string(current_time), function(resp) {
 	if(resp.success) 
 	{
 		tests.join = test_status.passed;
-		self.status = "joined a lobby, TODO"	
+		tests.host = test_status.passed;
+		tests.recv_game = test_status.running;
+		self.status = "joined a lobby"	
 	} 
 	else
 	{
@@ -17,7 +19,8 @@ pn_join_auto(string(current_time), function(resp) {
 				if(resp.success) 
 				{
 					tests.host = test_status.passed;
-					self.status = "created a lobby TODO"
+					self.status = "created a lobby, sending start game";
+					tests.send_game = test_status.running;
 				} 
 				else
 				{
