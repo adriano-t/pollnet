@@ -1,7 +1,7 @@
 
 /// @description creates an http request
-/// @param url
-/// @param str
+/// @param {String} url
+/// @param {String} str
 /// @returns {Real}
 /// @hide
 function pn_http_request(url, str){
@@ -14,14 +14,14 @@ function pn_http_request(url, str){
 
 
 /// @description split string
-/// @param str
-/// @param separator
+/// @param {String} str
+/// @param {String} separator
 /// @return {Array<String>}
 /// @hide
 function pn_string_split(str, separator) {
 
 	if(string_length(str) == 0)
-		return [];
+		return [""];
 	
 	var s = str;
 	var sep = separator;
@@ -45,4 +45,24 @@ function pn_string_split(str, separator) {
 		result[i] = s;
 	
 	return result;
+}
+
+
+/// @param {Function} callback
+/// @param {Any} data
+/// @hide
+function pn_resolve(callback, data = undefined) {
+	if(is_method(callback))
+		callback({success: true, data: data});
+}
+
+/// @param {Function} callback
+/// @param {Real} error_id
+/// @param {String} error
+/// @hide
+function pn_reject(callback, error_id, error) {
+	if(is_method(callback))
+		callback({success: false, error_id: error_id, error: error});
+	else if(is_method(obj_pollnet.pn_events[pn_event.error]))
+		obj_pollnet.pn_events[pn_event.error](error_id, error);
 }

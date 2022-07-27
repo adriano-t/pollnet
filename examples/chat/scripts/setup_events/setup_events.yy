@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "functions",
-    "path": "folders/pollnet/scripts/functions.yy",
+    "name": "scripts",
+    "path": "folders/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "pn_request_games_list",
+  "name": "setup_events",
   "tags": [],
   "resourceType": "GMScript",
 }

@@ -28,7 +28,7 @@ if($mode == "host")
     VALUES(INET_ATON('$ip'), '$token', '$username', '$gameid', TRUE)";
     mysql_query($query) or die(mysql_error());
 
-    exit($token . $word_sep . mysql_insert_id());
+    exit($token . $word_sep . mysql_insert_id() . $word_sep);
 } 
 elseif ($mode == "manage")
 {
@@ -108,12 +108,60 @@ elseif ($mode == "join")
         mysql_query($query) or die(mysql_error());
 		$player_id = mysql_insert_id();
 		
-        exit($token . $word_sep . $player_id);
+        exit($token . $word_sep . $player_id . $word_sep);
     } 
     else
     {
         exit("ERROR_LOBBY_FULL");
     }
+}
+elseif ($mode == "autojoin")
+{
+    //join lobby
+    if(!isset($_POST["gametoken"]) || !isset($_POST["username"]))
+        exit("ERROR_MISSING_PARAMETERS");
+    
+    $gametoken = mysql_real_escape_string($_POST["gametoken"]);
+        
+    $query = "SELECT pg.id, adm.id as admin, name, num, maxplayers
+    FROM ".$prefix."_games pg
+    JOIN (
+        SELECT game, COUNT(game) as num 
+        FROM ".$prefix."_users 
+        GROUP BY game
+        ) usr 
+    ON pg.id = usr.game
+    JOIN (
+        SELECT id, game
+        FROM ".$prefix."_users 
+        WHERE admin = TRUE
+        ) adm 
+    ON pg.id = adm.game
+    WHERE gametoken = '$gametoken' AND started = FALSE AND num < maxplayers";
+    
+    $result = mysql_query($query) or die(mysql_error());
+
+    if(mysql_num_rows($result) == 0) 
+        exit("ERROR_LOBBY_NOT_FOUND");
+
+    $row = mysql_fetch_assoc($result);
+        
+    $gameid = mysql_real_escape_string($row["id"]);
+    $admin = mysql_real_escape_string($row["admin"]);
+    $game_name = mysql_real_escape_string($row["name"]);
+    $maxplayers = mysql_real_escape_string($row["maxplayers"]);
+    $username = mysql_real_escape_string($_POST["username"]);
+    $token = randomString(20);
+
+    // insert the new player
+    $ip = mysql_real_escape_string(getUserIP());
+    $query = "INSERT INTO ".$prefix."_users(ip, token, name, game, admin) 
+    VALUES(INET_ATON('$ip'), '$token', '$username', '$gameid', FALSE)";
+    mysql_query($query) or die(mysql_error());
+    $player_id = mysql_insert_id();
+    
+    exit($token . $word_sep . $player_id . $word_sep . $game_name . $word_sep . $admin . $word_sep . $maxplayers . $word_sep);
+     
 }
 elseif ($mode == "quit")
 {
@@ -121,9 +169,18 @@ elseif ($mode == "quit")
     if(!isset($_POST["token"]))
         exit("ERROR_MISSING_PARAMETERS");
 
+    //delete player from lobby
     $token = mysql_real_escape_string($_POST["token"]);
     $query = " DELETE FROM ".$prefix."_users WHERE token = '$token'";
     $result = mysql_query($query) or die(mysql_error());
+
+    //delete empty games
+    $query = "DELETE FROM ".$prefix."_games
+    WHERE id NOT IN (
+        SELECT game FROM ".$prefix."_users 
+    )";
+    mysql_query($query) or die(mysql_error());
+
     exit("0");
 }
 elseif ($mode == "gameslist")

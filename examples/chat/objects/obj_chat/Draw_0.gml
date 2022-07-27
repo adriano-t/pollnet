@@ -4,9 +4,6 @@
 draw_set_color(c_ltgray);
 draw_rectangle(0, 0, 120, room_height -1, 0);
 
-//my name
-draw_text(10, 16,  global.pn_username);
-
 //other players name
 for(var i = 0; i < ds_list_size(global.pn_players_list); i++)
 {
@@ -33,7 +30,13 @@ draw_text(6, room_height - 25, keyboard_string + caret);
 if(keyboard_check_pressed(vk_enter))
 {
 	if(keyboard_string != "")
-		pn_send("chat", all, keyboard_string);
+		pn_send("chat", all, keyboard_string, function(resp) {
+			if(resp.success) {
+				ds_list_add(obj_chat.messages, resp.data.message);
+			} else {
+				show_debug_message(resp.error);	
+			}
+		});
 	keyboard_string = "";
 }
  
@@ -48,5 +51,7 @@ for(var i = idx; i < count; i++)
 
 if(button_pressed(spr_x, room_width - 32, 0))
 {
-	pn_quit();
+	pn_quit(function() {
+		show_debug_message("You quit the lobby");
+	});
 }

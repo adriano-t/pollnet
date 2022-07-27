@@ -1,9 +1,10 @@
-/// @description accept new players to join the game 
-function pn_game_start() {
+/// @description accept new players to join the game
+/// @param {Function} callback
+function pn_game_start(callback = undefined) {
  
 	var val = "mode=manage";
 	val += "&started=1";
 	val += "&token=" + global.pn_token;
 	global.pn_request_game_start = pn_http_request(global.pn_url_lobby, val);
-	
+	global.pn_callback_game_start = callback;
 }

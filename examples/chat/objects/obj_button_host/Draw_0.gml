@@ -13,5 +13,12 @@ if(button_pressed(spr_host, x, y))
 	if(p < 2)
 		exit;
 
-	pn_host(s, u, p);
+	pn_host(s, u, p, function(resp){
+		if(resp.success) {
+			room_goto(room_chat);
+		}
+		else {
+			show_debug_message(resp.error);
+		}
+	});
 }

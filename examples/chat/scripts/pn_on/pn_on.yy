@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "pollnet",
-    "path": "folders/pollnet.yy",
+    "name": "functions",
+    "path": "folders/pollnet/scripts/functions.yy",
   },
   "resourceVersion": "1.0",
-  "name": "pn_config",
+  "name": "pn_on",
   "tags": [],
   "resourceType": "GMScript",
 }

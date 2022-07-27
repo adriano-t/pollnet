@@ -1,7 +1,7 @@
 /// @description send a message to a specific player or all players
-/// @param {Real} message_id
+/// @param {Any} message_id
 /// @param {Real} to
-/// @param {String} message
+/// @param {Any} message
 /// @param {Function} callback
 function pn_send(message_id, to, message, callback = undefined) {
 
@@ -24,7 +24,7 @@ function pn_send(message_id, to, message, callback = undefined) {
 			
 			else
 			{
-				pn_reject(callback, pn_error.unkown_element_type, "encode: unknown array element type");
+				obj_pollnet.reject(callback, pn_error.unkown_element_type, "encode: unknown array element type");
 				return;
 			}
 		}
@@ -37,17 +37,17 @@ function pn_send(message_id, to, message, callback = undefined) {
 		packet += "2" + obj_pollnet.sep_packet + string(message); 
 	else
 	{
-		pn_reject(callback, pn_error.unknown_packet_type, "encode: unknown array element type");
+		obj_pollnet.reject(callback, pn_error.unknown_packet_type, "encode: unknown array element type");
 		return;
 	}
 
-	var val = "token=" + global.pn_token;
+	var val = "token=" + obj_pollnet.token;
 	if(to > 0)
 		val += "&to=" + string(to);
 	val += "&message=" + packet; 
-	var msgid = pn_http_request(global.pn_url_post, val);
+	var msgid = obj_pollnet.pn_http_request(obj_pollnet.url_post, val);
  
-	ds_list_add(global.pn_request_send_list, {
+	ds_list_add(obj_pollnet.request_send_list, {
 		request_id: msgid,
 		callback: callback,
 	}); 
