@@ -30,7 +30,7 @@
     "path": "folders/Objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "obj_games_list",
+  "name": "obj_lobby",
   "tags": [],
   "resourceType": "GMObject",
 }

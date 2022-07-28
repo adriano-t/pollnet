@@ -121,7 +121,7 @@ self.pn_http_request = function(url, str){
 /// @description split string
 /// @param {String} str
 /// @param {String} separator
-/// @return {Array<String>}
+/// @returns {Array<String>}
 /// @hide
 self.string_split = function(str, separator) {
 

@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "events",
-    "path": "folders/pollnet/scripts/events.yy",
+    "name": "scripts",
+    "path": "folders/pollnet/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "pn_on_send",
+  "name": "pn_join_auto",
   "tags": [],
   "resourceType": "GMScript",
 }

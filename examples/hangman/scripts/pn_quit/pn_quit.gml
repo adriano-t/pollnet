@@ -1,8 +1,8 @@
 /// @description disconnect from the game 
-function pn_quit() {
-
+/// @param {Function} callback
+function pn_quit(callback = undefined) {
 	var val = "mode=quit";
-	val += "&token=" + global.pn_token;
-	global.pn_request_quit = pn_http_request(global.pn_url_lobby, val);
-	
+	val += "&token=" + obj_pollnet.token;
+	obj_pollnet.request_quit = obj_pollnet.pn_http_request(obj_pollnet.url_lobby, val);
+	obj_pollnet.callback_quit = callback;
 }

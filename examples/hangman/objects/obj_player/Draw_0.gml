@@ -2,7 +2,6 @@
 //it's my turn
 if(global.turn == global.pn_player_id)
 {
-	
 	draw_text(x, y, "Your turn!");
 	 
 	// send the letter to the host
@@ -13,7 +12,7 @@ if(global.turn == global.pn_player_id)
 		{
 			var letter = string_upper(string_letters(s));
 			pn_send("letter", global.pn_admin_id, letter);
-			global.turn = noone;
+			global.turn = -1;
 		}
 	}
 		
@@ -24,7 +23,7 @@ if(global.turn == global.pn_player_id)
 		if(s != "")
 		{
 			pn_send("solution", global.pn_admin_id, s);
-			global.turn = noone;
+			global.turn = -1;
 		}
 	}
 		 

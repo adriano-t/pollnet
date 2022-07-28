@@ -22,7 +22,7 @@ if(button_pressed(spr_sentence, x, y))
 		pn_send("guess", all, global.guess);
 
 		// it's the turn of the first joined player
-		global.turn = global.pn_players_list[| 1];
+		global.turn = obj_pollnet.players_list[| 1];
 
 		// send the turn to all the players
 		pn_send("turn", all, global.turn);

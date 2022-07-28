@@ -1,0 +1,55 @@
+===========================
+= CONFIGURATION
+===========================
+
+obj_pollnet.set_config({
+	url_root: "http://my-awesome-website.com/my-directory/",  //link to the folder containing php files
+	game_token: "my_game_name", //game token (change this for each game or gamemode you create)
+	receive_interval: 2, // receive interval in seconds
+});
+
+===========================
+= REGISTER EVENTS
+===========================
+
+pn_on_event(pn_event.game_start, function(resp) {
+	if(resp.success) {
+		//the game has started
+	} else {
+		show_debug_message(string(resp.error_id) + " | " + string(resp.error));
+	}
+});
+
+pn_on_event(pn_event.player_join, function(resp) {
+	if(resp.success) {
+		show_debug_message("Player joined: " + string(resp.data.player_id) + " | " + string(resp.data.player_name));
+	} else {
+		show_debug_message(string(resp.error_id) + " | " + string(resp.error));
+	}
+});
+
+pn_on_event(pn_event.player_quit, function(resp) {
+	if(resp.success) {
+		show_debug_message("Player quit: " + string(resp.data.player_id) + " | " + string(resp.data.player_name));
+	} else {
+		show_debug_message(string(resp.error_id) + " | " + string(resp.error));
+	}
+});
+
+
+pn_on_event(pn_event.error, function(resp) {
+	show_debug_message(string(resp.error_id) + " | " + string(resp.error));
+});
+
+pn_on_event(pn_event.disconnect, function(resp) {
+	pn_quit();
+});
+
+
+pn_on_message("your-message-id", function(resp) {
+	if(resp.success) {					
+		//resp.data -> {last_date, from, to, message_id, message}
+	} else {
+		//resp.error
+	}
+});
