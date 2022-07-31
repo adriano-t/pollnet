@@ -16,7 +16,8 @@ $query = "CREATE TABLE ".$prefix."_games(
     gametoken VARCHAR(50) NOT NULL,
     started BOOLEAN NOT NULL DEFAULT FALSE,
     maxplayers SMALLINT NOT NULL,
-    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    private BOOLEAN NOT NULL DEFAULT FALSE
 );";
 mysql_query($query) or die(mysql_error());
 echo("games table created<br/>");

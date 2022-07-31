@@ -1,3 +1,0 @@
-function pn_config() {
-
-}

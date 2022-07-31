@@ -8,18 +8,19 @@ $mode =  $_POST["mode"];
 if($mode == "host")
 {
     //create lobby
-    if(!isset($_POST["gamename"]) || !isset($_POST["gametoken"]) || !isset($_POST["username"]) || !isset($_POST["maxplayers"]) || $_POST["maxplayers"] < 1)
+    if(!isset($_POST["gamename"]) || !isset($_POST["gametoken"]) || !isset($_POST["username"]) || !isset($_POST["maxplayers"]) || $_POST["maxplayers"] < 1 || !isset($_POST["private"]))
         exit("ERROR_MISSING_PARAMETERS");
 
     $gamename = mysql_real_escape_string($_POST["gamename"]);
     $gametoken = mysql_real_escape_string($_POST["gametoken"]);
     $username = mysql_real_escape_string($_POST["username"]);
     $maxplayers = mysql_real_escape_string($_POST["maxplayers"]);
+    $private = mysql_real_escape_string($_POST["private"]);
 	$ip = mysql_real_escape_string(getUserIP());
     $token = randomString(20);
     
-    $query = "INSERT INTO ".$prefix."_games(name, gametoken, maxplayers) 
-    VALUES('$gamename', '$gametoken', '$maxplayers')";
+    $query = "INSERT INTO ".$prefix."_games(name, gametoken, maxplayers, private) 
+    VALUES('$gamename', '$gametoken', '$maxplayers', '$private')";
     mysql_query($query) or die(mysql_error());
 
     $gameid = mysql_insert_id();
@@ -137,7 +138,10 @@ elseif ($mode == "autojoin")
         WHERE admin = TRUE
         ) adm 
     ON pg.id = adm.game
-    WHERE gametoken = '$gametoken' AND started = FALSE AND num < maxplayers";
+    WHERE gametoken = '$gametoken' 
+        AND started = FALSE 
+        AND pg.private = FALSE 
+        AND num < maxplayers";
     
     $result = mysql_query($query) or die(mysql_error());
 

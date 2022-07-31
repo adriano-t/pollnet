@@ -15,7 +15,7 @@ pn_join_auto(string(current_time), function(resp) {
 		if(resp.error_id == pn_error.lobby_not_found) 
 		{			
 			tests.join = test_status.passed;
-			pn_host("lobby " + string(current_time), "user" + string(current_time), 2, function(resp) {
+			pn_host("lobby " + string(current_time), "user" + string(current_time), 2, false, function(resp) {
 				if(resp.success) 
 				{
 					tests.host = test_status.passed;

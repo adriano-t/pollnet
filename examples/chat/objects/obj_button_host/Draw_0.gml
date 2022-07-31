@@ -13,7 +13,7 @@ if(button_pressed(spr_host, x, y))
 	if(p < 2)
 		exit;
 
-	pn_host(s, u, p, function(resp){
+	pn_host(s, u, p, false, function(resp){
 		if(resp.success) {
 			room_goto(room_chat);
 		}

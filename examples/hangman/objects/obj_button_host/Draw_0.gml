@@ -11,7 +11,7 @@ if(button_pressed(spr_host, x, y))
 		exit;
 
 
-	pn_host(s, u, 4, function(resp) {
+	pn_host(s, u, 4, false, function(resp) {
 		if(resp.success) {
 			room_goto(room_game);
 		} else {

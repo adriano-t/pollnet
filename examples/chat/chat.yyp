@@ -15,7 +15,6 @@
     {"id":{"name":"pn_on","path":"scripts/pn_on/pn_on.yy",},"order":5,},
     {"id":{"name":"room_start","path":"rooms/room_start/room_start.yy",},"order":0,},
     {"id":{"name":"button_pressed","path":"scripts/button_pressed/button_pressed.yy",},"order":0,},
-    {"id":{"name":"pn_config","path":"scripts/pn_config/pn_config.yy",},"order":6,},
     {"id":{"name":"pn_send","path":"scripts/pn_send/pn_send.yy",},"order":8,},
     {"id":{"name":"spr_join","path":"sprites/spr_join/spr_join.yy",},"order":2,},
     {"id":{"name":"font0","path":"fonts/font0/font0.yy",},"order":0,},
